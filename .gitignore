@@ -1,0 +1,15 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+
+# Files related to Visual Studio/Rider/VsCode
+.vscode/
+.vs/
+.idea/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
