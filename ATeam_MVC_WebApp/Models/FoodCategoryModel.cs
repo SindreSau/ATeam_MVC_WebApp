@@ -4,10 +4,11 @@ namespace ATeam_MVC_WebApp.Models
 {
   public class FoodCategory
   {
-    public int CategoryID { get; set; } // Unique ID for category
+    public int Id { get; set; }
 
     [Required]
-    public string CategoryName { get; set; } // Can't be null
+    [Display(Name = "Category")]
+    public string CategoryName { get; set; } = string.Empty;
 
     // public string Description { get; set; } = string.Empty; // In case we want to add brief descriptions of the Categories (i.e. Example products that are in each category)
   }
