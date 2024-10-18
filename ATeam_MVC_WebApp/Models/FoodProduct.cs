@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ATeam_MVC_WebApp.Models
 {
-	public class FoodProduct
+	public class FoodProduct : BaseEntity
     {
 	    [Key]
         public int Id { get; set; }  // Primary Key
@@ -39,7 +39,15 @@ namespace ATeam_MVC_WebApp.Models
         [Display(Name = "Category")]
         public int CategoryId { get; set; }
 
-        [ForeignKey("CategoryId")]
+        [ForeignKey("Id")]
         public virtual FoodCategory? Category { get; set; }
+
+        // Relationship to User
+        [Required]
+        [Display(Name = "Created By")]
+        public string CreatedById { get; set; } = string.Empty;
+
+        [ForeignKey("Id")]
+        public virtual User? CreatedBy { get; set; }
     }
 }

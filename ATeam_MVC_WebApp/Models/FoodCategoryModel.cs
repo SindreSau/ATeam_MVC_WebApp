@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ATeam_MVC_WebApp.Models
 {
-  public class FoodCategory
+  public class FoodCategory : BaseEntity
   {
     public int Id { get; set; }
 
