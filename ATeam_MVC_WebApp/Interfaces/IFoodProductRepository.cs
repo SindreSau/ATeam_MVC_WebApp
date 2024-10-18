@@ -1,3 +1,5 @@
+using ATeam_MVC_WebApp.Models;
+
 namespace ATeam_MVC_WebApp.Interfaces;
 
 public interface IFoodProductRepository
