@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ATeam_MVC_WebApp.Models
 {
-  class FoodCategory
+  public class FoodCategory
   {
     public int CategoryID { get; set; } // Unique ID for category
 
