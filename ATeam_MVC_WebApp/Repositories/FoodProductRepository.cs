@@ -56,21 +56,34 @@ public class FoodProductRepository : IFoodProductRepository
 
     public async Task<FoodProduct> GetFoodProductAsync(int id)
     {
-        throw new NotImplementedException();
+        var foodProduct = await _context.FoodProducts.FindAsync(id);
+        return foodProduct;
     }
 
     public async Task<FoodProduct> AddFoodProductAsync(FoodProduct foodProduct)
     {
-        throw new NotImplementedException();
+        _context.FoodProducts.Add(foodProduct);
+        await _context.SaveChangesAsync();
+        return foodProduct;
     }
 
     public async Task<FoodProduct> UpdateFoodProductAsync(FoodProduct foodProduct)
     {
-        throw new NotImplementedException();
+        _context.FoodProducts.Update(foodProduct);
+        await _context.SaveChangesAsync();
+        return foodProduct;
     }
 
     public async Task<bool> DeleteFoodProductAsync(int id)
     {
-        throw new NotImplementedException();
+        var foodProduct = await _context.FoodProducts.FindAsync(id);
+
+        if (foodProduct == null){
+            return false;
+        }
+
+        _context.FoodProducts.Remove(foodProduct);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
