@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ATeam_MVC_WebApp.Models
 {
-	public class FoodProduct
+	public class FoodProduct : BaseEntity
     {
 	    [Key]
         public int Id { get; set; }  // Primary Key
@@ -41,5 +41,14 @@ namespace ATeam_MVC_WebApp.Models
 
         [ForeignKey("CategoryId")]
         public virtual FoodCategory? Category { get; set; }
+
+        // Relationship to User
+        [Required]
+        [Display(Name = "Created By")]
+        [StringLength(450)] // 450 is the maximum length of the Id field in the AspNetUsers table
+        public string CreatedById { get; set; } = string.Empty;
+
+        [ForeignKey("CreatedById")]
+        public virtual ApplicationUser? CreatedBy { get; set; }
     }
 }
