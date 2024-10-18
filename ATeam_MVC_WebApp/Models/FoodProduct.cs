@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ATeam_MVC_WebApp.Models
 {
@@ -8,16 +9,12 @@ namespace ATeam_MVC_WebApp.Models
         public int Id { get; set; }  // Primary Key
 
         [Required]
-        public string ProducerId { get; set; }  // Foreign Key to the producer table
-
-        [Required]
         [StringLength(100, ErrorMessage = "Product name cannot exceed 100 characters.")]
-        public string ProductName { get; set; }
-
-        [Required]
-        public int CategoryId { get; set; }  // Foreign Key to the category table
+        [Display(Name = "Product Name")]
+        public string ProductName { get; set; } = string.Empty;
 
         [Range(0, double.MaxValue, ErrorMessage = "Energy (kcal) must be a positive value.")]
+        [Display(Name = "Energy (kcal)")]
         public decimal EnergyKcal { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "Fat must be a positive value.")]
@@ -36,5 +33,13 @@ namespace ATeam_MVC_WebApp.Models
         public decimal Salt { get; set; }
 
         public bool NokkelhullQualified { get; set; }  // Indicates if the product is nøkkelhull certified
+
+        // Relationship to FoodCategory
+        [Required]
+        [Display(Name = "Category")]
+        public int CategoryId { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public virtual FoodCategory? Category { get; set; }
     }
 }
