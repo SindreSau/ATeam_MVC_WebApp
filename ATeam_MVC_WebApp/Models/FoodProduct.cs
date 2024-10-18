@@ -48,6 +48,6 @@ namespace ATeam_MVC_WebApp.Models
         public string CreatedById { get; set; } = string.Empty;
 
         [ForeignKey("Id")]
-        public virtual User? CreatedBy { get; set; }
+        public virtual ApplicationUser? CreatedBy { get; set; }
     }
 }
