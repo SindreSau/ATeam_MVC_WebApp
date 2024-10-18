@@ -8,16 +8,16 @@ namespace ATeam_MVC_WebApp.Repositories
     // TEMPORARY IN-MEMORY VALUES UNTIL DB SET UP (Based on the Lovdata)
     private readonly List<FoodCategory> _categories = new List<FoodCategory>
     {
-      new FoodCategory { CategoryID = 1, CategoryName = "Grønnsaker, frukt, bær og nøtter"},
-      new FoodCategory { CategoryID = 2, CategoryName = "Grøt, brød og pasta"},
-      new FoodCategory { CategoryID = 3, CategoryName = "Melk, syrnede melkeprodukter og vegetabilske alternativer"},
-      new FoodCategory { CategoryID = 4, CategoryName = "Ost og vegetabilske alternativer"},
-      new FoodCategory { CategoryID = 5, CategoryName = "Matfett og Oljer"},
-      new FoodCategory { CategoryID = 6, CategoryName = "Fiskerivarer og produkter av fiskerivarer"},
-      new FoodCategory { CategoryID = 7, CategoryName = "Kjøtt og produkter som inneholder kjøtt"},
-      new FoodCategory { CategoryID = 8, CategoryName = "Helt, eller delvis vegetabilske produkter"},
-      new FoodCategory { CategoryID = 9, CategoryName = "Ferdigretter"},
-      new FoodCategory { CategoryID = 10, CategoryName = "Dressinger og sauser"},
+      new FoodCategory { Id = 1, CategoryName = "Grønnsaker, frukt, bær og nøtter"},
+      new FoodCategory { Id = 2, CategoryName = "Grøt, brød og pasta"},
+      new FoodCategory { Id = 3, CategoryName = "Melk, syrnede melkeprodukter og vegetabilske alternativer"},
+      new FoodCategory { Id = 4, CategoryName = "Ost og vegetabilske alternativer"},
+      new FoodCategory { Id = 5, CategoryName = "Matfett og Oljer"},
+      new FoodCategory { Id = 6, CategoryName = "Fiskerivarer og produkter av fiskerivarer"},
+      new FoodCategory { Id = 7, CategoryName = "Kjøtt og produkter som inneholder kjøtt"},
+      new FoodCategory { Id = 8, CategoryName = "Helt, eller delvis vegetabilske produkter"},
+      new FoodCategory { Id = 9, CategoryName = "Ferdigretter"},
+      new FoodCategory { Id = 10, CategoryName = "Dressinger og sauser"},
     };
 
     // Asynchronously retrieves all food categories
@@ -29,7 +29,7 @@ namespace ATeam_MVC_WebApp.Repositories
     // Asynchronously retrieves a food category by it's ID
     public async Task<FoodCategory> GetCategoryByIDAsync(int categoryId)
     {
-      var category = _categories.FirstOrDefault(c => c.CategoryID == categoryId);
+      var category = _categories.FirstOrDefault(c => c.Id == categoryId);
       return await Task.FromResult(category);
     }
 
@@ -43,7 +43,7 @@ namespace ATeam_MVC_WebApp.Repositories
     // Asynchronously updates an existing food category
     public async Task<bool> UpdateCategoryAsync(FoodCategory category)
     {
-      var existingCategory = await GetCategoryByIDAsync(category.CategoryID);
+      var existingCategory = await GetCategoryByIDAsync(category.Id);
       if (existingCategory != null)
       {
         existingCategory.CategoryName = category.CategoryName;
