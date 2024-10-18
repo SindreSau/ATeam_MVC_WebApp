@@ -13,3 +13,7 @@ riderModule.iml
 *.db
 *.db-shm
 *.db-wal
+
+# Logfiles
+*.log
+*log-*
