@@ -1,68 +1,78 @@
 using ATeam_MVC_WebApp.Interfaces;
 using ATeam_MVC_WebApp.Models;
+using ATeam_MVC_WebApp.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ATeam_MVC_WebApp.Repositories
 {
   public class FoodCategoryRepository : IFoodCategoryRepository
   {
-    // TEMPORARY IN-MEMORY VALUES UNTIL DB SET UP (Based on the Lovdata)
-    private readonly List<FoodCategory> _categories = new List<FoodCategory>
+    private readonly ApplicationDbContext _context;
+
+    // Constructor to initialize repo with database context
+    public FoodCategoryRepository(ApplicationDbContext context)
     {
-      new FoodCategory { Id = 1, CategoryName = "Grønnsaker, frukt, bær og nøtter"},
-      new FoodCategory { Id = 2, CategoryName = "Grøt, brød og pasta"},
-      new FoodCategory { Id = 3, CategoryName = "Melk, syrnede melkeprodukter og vegetabilske alternativer"},
-      new FoodCategory { Id = 4, CategoryName = "Ost og vegetabilske alternativer"},
-      new FoodCategory { Id = 5, CategoryName = "Matfett og Oljer"},
-      new FoodCategory { Id = 6, CategoryName = "Fiskerivarer og produkter av fiskerivarer"},
-      new FoodCategory { Id = 7, CategoryName = "Kjøtt og produkter som inneholder kjøtt"},
-      new FoodCategory { Id = 8, CategoryName = "Helt, eller delvis vegetabilske produkter"},
-      new FoodCategory { Id = 9, CategoryName = "Ferdigretter"},
-      new FoodCategory { Id = 10, CategoryName = "Dressinger og sauser"},
-    };
+      _context = context;
+    }
 
     // Asynchronously retrieves all food categories
     public async Task<IEnumerable<FoodCategory>> GetAllCategoriesAsync()
     {
-      return await Task.FromResult(_categories);
+      return await _context.FoodCategories.ToListAsync();
     }
 
     // Asynchronously retrieves a food category by it's ID
     public async Task<FoodCategory> GetCategoryByIDAsync(int categoryId)
     {
-      var category = _categories.FirstOrDefault(c => c.Id == categoryId);
-      return await Task.FromResult(category);
+      // Finds and returns specific food category by ID
+      var category = await _context.FoodCategories.FindAsync(categoryId);
+      if (category == null)
+      {
+        throw new KeyNotFoundException($"FoodCategory with ID {categoryId} not found.");
+      }
+      return category;
     }
 
     // Asynchronously adds a new food category to the list
     public async Task<bool> AddCategoryAsync(FoodCategory category)
     {
-      _categories.Add(category);
-      return await Task.FromResult(true);
+      // Adds new food category to the context
+      _context.FoodCategories.Add(category);
+      // Saves changes to database
+      await _context.SaveChangesAsync();
+      return true;
     }
 
     // Asynchronously updates an existing food category
     public async Task<bool> UpdateCategoryAsync(FoodCategory category)
     {
-      var existingCategory = await GetCategoryByIDAsync(category.Id);
-      if (existingCategory != null)
+      var existingCategory = await _context.FoodCategories.FindAsync(category.Id);
+      if (existingCategory == null)
       {
-        existingCategory.CategoryName = category.CategoryName;
-        // Any other properties that are updated (if we add description)
-        return await Task.FromResult(true);
+        throw new KeyNotFoundException($"FoodCategory with ID {category.Id} not found. Could not update.");
       }
-      return await Task.FromResult(false);
+      // Updates name of category in context
+      existingCategory.CategoryName = category.CategoryName;
+      _context.FoodCategories.Update(existingCategory);
+      // Saves changes to database
+      await _context.SaveChangesAsync();
+      return true;
+
     }
 
     // Asynchronously deletes a food category by its ID
     public async Task<bool> DeleteCategoryAsync(int categoryId)
     {
-      var category = await GetCategoryByIDAsync(categoryId);
-      if (category != null)
+      var category = await _context.FoodCategories.FindAsync(categoryId);
+      if (category == null)
       {
-        _categories.Remove(category);
-        return true;
+        throw new KeyNotFoundException($"FoodCategory with ID {categoryId} not found. Could not delete.");
       }
-      return false;
+      // Delete category from context
+      _context.FoodCategories.Remove(category);
+      // Save changes to database
+      await _context.SaveChangesAsync();
+      return true;
     }
 
   }
