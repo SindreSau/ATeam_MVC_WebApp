@@ -1,75 +1,66 @@
 using ATeam_MVC_WebApp.Data;
-using Microsoft.AspNetCore.Hosting.Server.Features;
+using ATeam_MVC_WebApp.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Serilog.Events;
 
-// === SERILOG CONFIGURATION === //
-// Log.Logger = new LoggerConfiguration()
-//     .MinimumLevel.Debug()
-//     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-//     .Enrich.FromLogContext()
-//     .WriteTo.Console()
-//     .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day)
-//     .WriteTo.Seq("http://localhost:8080")
-//     .CreateBootstrapLogger();
+var builder = WebApplication.CreateBuilder(args);
 
-try
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+// Configure the database
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddRazorPages();
+
+// Configure application cookie
+builder.Services.ConfigureApplicationCookie(options =>
 {
-    Log.Information("Starting web application");
-    Log.Information("Creating builder...");
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+});
 
-    // === BUILDER CONFIGURATION === //
-    var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
 
-    // Add Serilog
-    // builder.Host.UseSerilog((context, services, configuration) => configuration
-    //     .ReadFrom.Configuration(context.Configuration)
-    //     .ReadFrom.Services(services)
-    //     .Enrich.FromLogContext()
-    //     .WriteTo.Console()
-    //     .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day)
-    //     .WriteTo.Seq("http://localhost:8080"));
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
-    // Add controllers with support for views
-    builder.Services.AddControllersWithViews();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-    // Configure the database
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+app.UseRouting();
 
-    builder.Services.AddRazorPages(); // Add Razor Pages as these are used for Identity
+app.UseAuthentication();
+app.UseAuthorization();
 
-    // === APP CONFIGURATION === //
-    Log.Information("Configuring application...");
-    var app = builder.Build();
-
-    if (!app.Environment.IsDevelopment())
+// Redirect to login if not authenticated
+app.Use(async (context, next) =>
+{
+    if (!context.User.Identity.IsAuthenticated &&
+        !context.Request.Path.StartsWithSegments("/Identity") &&
+        !context.Request.Path.StartsWithSegments("/lib") &&
+        !context.Request.Path.StartsWithSegments("/css") &&
+        !context.Request.Path.StartsWithSegments("/js"))
     {
-        app.UseHsts();
+        context.Response.Redirect("/Identity/Account/Login");
+        return;
     }
+    await next();
+});
 
-    app.UseHttpsRedirection();
-    app.UseStaticFiles();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-    app.UseRouting();
+app.MapRazorPages();
 
-    app.UseAuthentication();
-    app.UseAuthorization();
-
-    app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-
-    Log.Information("Application started");
-    Log.Information("Application is running on https://localhost:7177/");
-    app.Run();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Application terminated unexpectedly");
-}
-finally
-{
-    Log.CloseAndFlush();
-}
+app.Run();
