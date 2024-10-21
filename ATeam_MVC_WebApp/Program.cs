@@ -1,5 +1,4 @@
 using ATeam_MVC_WebApp.Data;
-using ATeam_MVC_WebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +11,23 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+// Configure Identity
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedEmail = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+})
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddSession();
 
 // Configure application cookie
 builder.Services.ConfigureApplicationCookie(options =>
@@ -45,7 +57,7 @@ app.UseAuthorization();
 // Redirect to login if not authenticated
 app.Use(async (context, next) =>
 {
-    if (!context.User.Identity.IsAuthenticated &&
+    if (context.User.Identity is { IsAuthenticated: false } &&
         !context.Request.Path.StartsWithSegments("/Identity") &&
         !context.Request.Path.StartsWithSegments("/lib") &&
         !context.Request.Path.StartsWithSegments("/css") &&

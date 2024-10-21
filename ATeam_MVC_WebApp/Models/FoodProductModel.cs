@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace ATeam_MVC_WebApp.Models
 {
@@ -49,6 +50,6 @@ namespace ATeam_MVC_WebApp.Models
         public string CreatedById { get; set; } = string.Empty;
 
         [ForeignKey("CreatedById")]
-        public virtual ApplicationUser? CreatedBy { get; set; }
+        public virtual IdentityUser? CreatedBy { get; set; }
     }
 }
