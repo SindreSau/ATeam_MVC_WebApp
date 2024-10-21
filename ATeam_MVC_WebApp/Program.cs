@@ -1,4 +1,6 @@
 using ATeam_MVC_WebApp.Data;
+using ATeam_MVC_WebApp.Interfaces;
+using ATeam_MVC_WebApp.Repositories;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -33,16 +35,22 @@ try
 
     // Add controllers with support for views
     builder.Services.AddControllersWithViews();
+    builder.Services.AddScoped<IFoodProductRepository, FoodProductRepository>();
+    builder.Services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
+
 
     // Configure the database
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    {
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
 
     builder.Services.AddRazorPages(); // Add Razor Pages as these are used for Identity
 
     // === APP CONFIGURATION === //
     Log.Information("Configuring application...");
     var app = builder.Build();
+    Seed.SeedData(app);
 
     if (!app.Environment.IsDevelopment())
     {
