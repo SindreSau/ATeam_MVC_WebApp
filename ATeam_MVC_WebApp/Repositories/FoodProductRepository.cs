@@ -84,13 +84,18 @@ namespace ATeam_MVC_WebApp.Repositories
         // Asynchronously updates an existing food product in the database
         public async Task<FoodProduct> UpdateFoodProductAsync(FoodProduct foodProduct)
         {
-            // Update the food product in the context
-            _context.FoodProducts.Update(foodProduct);
-            // Save changes to the database
-            await _context.SaveChangesAsync();
-            return foodProduct; // Return the updated product
-        }
+            var existingFoodProduct = await _context.FoodProducts.FindAsync(foodProduct.FoodProductId);
+            if (existingFoodProduct == null)
+            {
+                throw new KeyNotFoundException($"FoodCategory with ID {foodProduct.FoodProductId} not found. Could not update.");
+            }
 
+            existingFoodProduct.ProductName = foodProduct.ProductName;
+            _context.FoodProducts.Update(existingFoodProduct);
+            await _context.SaveChangesAsync();
+            return existingFoodProduct;
+        }
+        
         // Asynchronously deletes a food product by its ID
         public async Task<bool> DeleteFoodProductAsync(int id)
         {
