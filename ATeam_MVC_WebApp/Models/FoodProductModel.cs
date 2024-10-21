@@ -35,20 +35,20 @@ namespace ATeam_MVC_WebApp.Models
         public bool NokkelhullQualified { get; set; }  // Indicates if the product is nøkkelhull certified
 
         // Relationship to FoodCategory
-        [Required]
-        [Display(Name = "Category")]
+        [ForeignKey("CategoryId")]
         public int CategoryId { get; set; }
 
-        [ForeignKey("CategoryId")]
+        [Required]
+        [Display(Name = "Category")]
         public virtual FoodCategory? Category { get; set; }
 
         // Relationship to User
+        [ForeignKey("CreatedById")]
+        public string CreatedById { get; set; } = string.Empty;
+
         [Required]
         [Display(Name = "Created By")]
         [StringLength(450)] // 450 is the maximum length of the Id field in the AspNetUsers table
-        public string CreatedById { get; set; } = string.Empty;
-
-        [ForeignKey("CreatedById")]
         public virtual ApplicationUser? CreatedBy { get; set; }
     }
 }
