@@ -1,7 +1,8 @@
 
 public static class NutritionCalculatorService
 {
-    public static bool IsNokkelhullQualified(float fat, float sugar, float salt, float fiber)
+    public static bool IsNokkelhullQualified(float energyKcal, float fat, float carbohydrates,
+     float protein, float fiber, float salt)
     {
          //Krav kan endres eller legges til her
         float max_energyKcal = 40; //gram per 100g
@@ -11,7 +12,7 @@ public static class NutritionCalculatorService
         float min_fiber = 6; // gram per 100g 
         float max_salt = 1; // gram per 100g
         
-        if (max_energyKcal <= max_energyKcal && fett <= max_fat && carbohydrates <= max_carbohydrates
+        if (energyKcal <= max_energyKcal && fett <= max_fat && carbohydrates <= max_carbohydrates
          && protein >= min_protein && fiber >= min_fiber && salt <= max_salt)
         {
             return true;
@@ -22,5 +23,3 @@ public static class NutritionCalculatorService
         }
     }
 }
-
-
