@@ -5,14 +5,14 @@ using Serilog;
 using Serilog.Events;
 
 // === SERILOG CONFIGURATION === //
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day)
-    .WriteTo.Seq("http://localhost:5341")
-    .CreateBootstrapLogger();
+// Log.Logger = new LoggerConfiguration()
+//     .MinimumLevel.Debug()
+//     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+//     .Enrich.FromLogContext()
+//     .WriteTo.Console()
+//     .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day)
+//     .WriteTo.Seq("http://localhost:8080")
+//     .CreateBootstrapLogger();
 
 try
 {
@@ -23,13 +23,13 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Add Serilog
-    builder.Host.UseSerilog((context, services, configuration) => configuration
-        .ReadFrom.Configuration(context.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .WriteTo.Console()
-        .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day)
-        .WriteTo.Seq("http://localhost:5341"));
+    // builder.Host.UseSerilog((context, services, configuration) => configuration
+    //     .ReadFrom.Configuration(context.Configuration)
+    //     .ReadFrom.Services(services)
+    //     .Enrich.FromLogContext()
+    //     .WriteTo.Console()
+    //     .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day)
+    //     .WriteTo.Seq("http://localhost:8080"));
 
     // Add controllers with support for views
     builder.Services.AddControllersWithViews();
