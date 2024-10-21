@@ -7,7 +7,7 @@ namespace ATeam_MVC_WebApp.Interfaces
     Task<IEnumerable<FoodCategory>> GetAllCategoriesAsync(); // GET ALL
     Task<FoodCategory> GetCategoryByIDAsync(int categoryId); // GET ONE
     Task<bool> AddCategoryAsync(FoodCategory category); // CREATE
-    Task<bool> UpdateCategoryAsync(FoodCategory category); // UPDATE
+    Task<FoodCategory> UpdateCategoryAsync(FoodCategory category); // UPDATE
     Task<bool> DeleteCategoryAsync(int categoryId); // DELETE
 
   }

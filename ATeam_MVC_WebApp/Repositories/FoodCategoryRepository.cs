@@ -44,7 +44,7 @@ namespace ATeam_MVC_WebApp.Repositories
     }
 
     // Asynchronously updates an existing food category
-    public async Task<bool> UpdateCategoryAsync(FoodCategory category)
+    public async Task<FoodCategory> UpdateCategoryAsync(FoodCategory category)
     {
       var existingCategory = await _context.FoodCategories.FindAsync(category.Id);
       if (existingCategory == null)
@@ -56,7 +56,7 @@ namespace ATeam_MVC_WebApp.Repositories
       _context.FoodCategories.Update(existingCategory);
       // Saves changes to database
       await _context.SaveChangesAsync();
-      return true;
+      return existingCategory;
 
     }
 
