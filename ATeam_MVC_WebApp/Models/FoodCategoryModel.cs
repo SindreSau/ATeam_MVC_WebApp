@@ -5,7 +5,7 @@ namespace ATeam_MVC_WebApp.Models
   public class FoodCategory : BaseEntity
   {
     [Key]
-    public int Id { get; set; }
+    public int FoodCategoryId { get; set; }
 
     [Required]
     [Display(Name = "Category")]

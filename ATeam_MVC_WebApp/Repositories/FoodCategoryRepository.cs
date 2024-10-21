@@ -46,10 +46,10 @@ namespace ATeam_MVC_WebApp.Repositories
     // Asynchronously updates an existing food category
     public async Task<FoodCategory> UpdateCategoryAsync(FoodCategory category)
     {
-      var existingCategory = await _context.FoodCategories.FindAsync(category.Id);
+      var existingCategory = await _context.FoodCategories.FindAsync(category.FoodCategoryId);
       if (existingCategory == null)
       {
-        throw new KeyNotFoundException($"FoodCategory with ID {category.Id} not found. Could not update.");
+        throw new KeyNotFoundException($"FoodCategory with ID {category.FoodCategoryId} not found. Could not update.");
       }
       // Updates name of category in context
       existingCategory.CategoryName = category.CategoryName;

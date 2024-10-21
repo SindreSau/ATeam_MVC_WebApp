@@ -6,7 +6,7 @@ namespace ATeam_MVC_WebApp.Models
 	public class FoodProduct : BaseEntity
     {
 	    [Key]
-        public int Id { get; set; }  // Primary Key
+        public int FoodProductId { get; set; }  // Primary Key
 
         [Required]
         [StringLength(100, ErrorMessage = "Product name cannot exceed 100 characters.")]

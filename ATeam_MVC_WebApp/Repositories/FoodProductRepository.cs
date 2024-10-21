@@ -50,7 +50,7 @@ namespace ATeam_MVC_WebApp.Repositories
                     query = query.OrderBy(fp => fp.Salt);
                     break;
                 default:
-                    query = query.OrderBy(fp => fp.Id); // Default ordering by Id
+                    query = query.OrderBy(fp => fp.FoodProductId); // Default ordering by Id
                     break;
             }
 
