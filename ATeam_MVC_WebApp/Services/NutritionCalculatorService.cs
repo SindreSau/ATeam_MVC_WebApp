@@ -12,7 +12,7 @@ public static class NutritionCalculatorService
         float min_fiber = 6; // gram per 100g 
         float max_salt = 1; // gram per 100g
         
-        if (energyKcal <= max_energyKcal && fett <= max_fat && carbohydrates <= max_carbohydrates
+        if (energyKcal <= max_energyKcal && fat <= max_fat && carbohydrates <= max_carbohydrates
          && protein >= min_protein && fiber >= min_fiber && salt <= max_salt)
         {
             return true;
