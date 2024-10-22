@@ -2,6 +2,9 @@ using ATeam_MVC_WebApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+// ====================================== //
+// === Set up the application builder === //
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -61,7 +64,28 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // The session cookie is essential
 });
 
+
+// ===================================== //
+// === Add services to the container === //
 var app = builder.Build();
+
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+        await DbSeeder.SeedData(services, userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

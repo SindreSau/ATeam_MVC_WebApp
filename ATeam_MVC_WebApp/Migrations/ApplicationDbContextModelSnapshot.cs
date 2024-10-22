@@ -25,6 +25,7 @@ namespace ATeam_MVC_WebApp.Migrations
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
@@ -47,14 +48,12 @@ namespace ATeam_MVC_WebApp.Migrations
                     b.Property<decimal>("Carbohydrates")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CreatedById")
                         .IsRequired()
+                        .HasMaxLength(450)
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("EnergyKcal")
@@ -65,6 +64,9 @@ namespace ATeam_MVC_WebApp.Migrations
 
                     b.Property<decimal>("Fiber")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("FoodCategoryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("NokkelhullQualified")
                         .HasColumnType("INTEGER");
@@ -85,9 +87,9 @@ namespace ATeam_MVC_WebApp.Migrations
 
                     b.HasKey("FoodProductId");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("FoodCategoryId");
 
                     b.ToTable("FoodProducts");
                 });
@@ -231,11 +233,9 @@ namespace ATeam_MVC_WebApp.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderDisplayName")
@@ -273,11 +273,9 @@ namespace ATeam_MVC_WebApp.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
@@ -290,16 +288,16 @@ namespace ATeam_MVC_WebApp.Migrations
 
             modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodProduct", b =>
                 {
-                    b.HasOne("ATeam_MVC_WebApp.Models.FoodCategory", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ATeam_MVC_WebApp.Models.FoodCategory", "Category")
+                        .WithMany("FoodProducts")
+                        .HasForeignKey("FoodCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -356,6 +354,11 @@ namespace ATeam_MVC_WebApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodCategory", b =>
+                {
+                    b.Navigation("FoodProducts");
                 });
 #pragma warning restore 612, 618
         }
