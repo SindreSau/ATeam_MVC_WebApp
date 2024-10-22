@@ -1,0 +1,24 @@
+@model ATeam_MVC_WebApp.ViewModels.FoodProductListViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>title</title>
+</head>
+<body>
+<div>
+    @foreach(var foodProduct in Model.FoodProducts)
+    {
+        <div>
+            <p>Name: @foodProduct.ProductName</p>
+            <p>Category: @foodProduct.CategoryName</p>
+        </div>
+    }
+</div>
+</body>
+</html>
