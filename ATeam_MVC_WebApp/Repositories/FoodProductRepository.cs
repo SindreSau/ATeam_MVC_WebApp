@@ -64,7 +64,7 @@ namespace ATeam_MVC_WebApp.Repositories
         }
 
         // Asynchronously retrieves a specific food product by its ID
-        public async Task<FoodProduct> GetFoodProductAsync(int id)
+        public async Task<FoodProduct> GetFoodProductAsync(int id) 
         {
             // Find and return the food product by ID
             var foodProduct = await _context.FoodProducts.FindAsync(id);
@@ -113,6 +113,11 @@ namespace ATeam_MVC_WebApp.Repositories
             // Save changes to the database
             await _context.SaveChangesAsync();
             return true; // Return true indicating successful deletion
+        }
+        //oskar, gjorde dette får å få til view
+        public async Task<IEnumerable<FoodProduct>> GetAll()
+        {
+            return await _context.FoodProducts.ToListAsync();
         }
     }
 }
