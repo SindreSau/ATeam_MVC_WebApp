@@ -12,6 +12,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <link rel="icon" type="image/svg" href="~/favicon.svg"/>
+
+    <!-- Add transition styles -->
+    <style>
+        :root {
+            transition: color-scheme .3s ease-in-out,
+            background-color .3s ease-in-out,
+            border-color .3s ease-in-out,
+            box-shadow .3s ease-in-out,
+            color .3s ease-in-out;
+        }
+
+        .theme-icon-transition {
+            transition: transform .3s ease-in-out;
+        }
+
+        .theme-icon-transition:hover {
+            transform: rotate(25deg);
+        }
+    </style>
 </head>
 <body class="min-vh-100 d-flex flex-column">
 <header>
@@ -25,6 +44,7 @@
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
+
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
@@ -37,12 +57,13 @@
                             <a class="nav-link" asp-area="" asp-controller="Vendor" asp-action="Index">Vendor</a>
                         </li>
                     }
+
                 </ul>
 
                 <!-- Theme Toggle Button -->
                 <div class="nav-item me-3">
-                    <button class="btn btn-link nav-link px-2" id="theme-toggle">
-                        <i class="fas fa-sun" id="theme-icon"></i>
+                    <button class="btn btn-link px-2" id="theme-toggle">
+                        <i class="fas fa-sun theme-icon-transition" id="theme-icon"></i>
                     </button>
                 </div>
                 <partial name="_LoginPartial"/>
