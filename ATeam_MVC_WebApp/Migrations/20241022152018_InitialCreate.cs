@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ATeam_MVC_WebApp.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDatabase : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +48,21 @@ namespace ATeam_MVC_WebApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FoodCategories",
+                columns: table => new
+                {
+                    FoodCategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CategoryName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodCategories", x => x.FoodCategoryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,6 +171,42 @@ namespace ATeam_MVC_WebApp.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "FoodProducts",
+                columns: table => new
+                {
+                    FoodProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    EnergyKcal = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Fat = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Carbohydrates = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Protein = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Fiber = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Salt = table.Column<decimal>(type: "TEXT", nullable: false),
+                    NokkelhullQualified = table.Column<bool>(type: "INTEGER", nullable: false),
+                    FoodCategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<string>(type: "TEXT", maxLength: 450, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodProducts", x => x.FoodProductId);
+                    table.ForeignKey(
+                        name: "FK_FoodProducts_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_FoodProducts_FoodCategories_FoodCategoryId",
+                        column: x => x.FoodCategoryId,
+                        principalTable: "FoodCategories",
+                        principalColumn: "FoodCategoryId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -192,6 +243,16 @@ namespace ATeam_MVC_WebApp.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FoodProducts_CreatedById",
+                table: "FoodProducts",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FoodProducts_FoodCategoryId",
+                table: "FoodProducts",
+                column: "FoodCategoryId");
         }
 
         /// <inheritdoc />
@@ -213,10 +274,16 @@ namespace ATeam_MVC_WebApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "FoodProducts");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "FoodCategories");
         }
     }
 }

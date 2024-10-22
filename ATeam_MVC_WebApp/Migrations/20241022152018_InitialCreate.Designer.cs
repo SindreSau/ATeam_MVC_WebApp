@@ -11,14 +11,91 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATeam_MVC_WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241016200757_CreateDatabase")]
-    partial class CreateDatabase
+    [Migration("20241022152018_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
+
+            modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodCategory", b =>
+                {
+                    b.Property<int>("FoodCategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("FoodCategoryId");
+
+                    b.ToTable("FoodCategories");
+                });
+
+            modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodProduct", b =>
+                {
+                    b.Property<int>("FoodProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Carbohydrates")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("EnergyKcal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Fat")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Fiber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("FoodCategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("NokkelhullQualified")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Protein")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Salt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("FoodProductId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("FoodCategoryId");
+
+                    b.ToTable("FoodProducts");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -212,6 +289,25 @@ namespace ATeam_MVC_WebApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodProduct", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ATeam_MVC_WebApp.Models.FoodCategory", "Category")
+                        .WithMany("FoodProducts")
+                        .HasForeignKey("FoodCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CreatedBy");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -261,6 +357,11 @@ namespace ATeam_MVC_WebApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodCategory", b =>
+                {
+                    b.Navigation("FoodProducts");
                 });
 #pragma warning restore 612, 618
         }
