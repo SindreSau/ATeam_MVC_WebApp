@@ -16,11 +16,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;
-    options.Password.RequireDigit = false;
+    options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -55,19 +55,19 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Redirect to login if not authenticated
-app.Use(async (context, next) =>
-{
-    if (context.User.Identity is { IsAuthenticated: false } &&
-        !context.Request.Path.StartsWithSegments("/Identity") &&
-        !context.Request.Path.StartsWithSegments("/lib") &&
-        !context.Request.Path.StartsWithSegments("/css") &&
-        !context.Request.Path.StartsWithSegments("/js"))
-    {
-        context.Response.Redirect("/Identity/Account/Login");
-        return;
-    }
-    await next();
-});
+// app.Use(async (context, next) =>
+// {
+//     if (context.User.Identity is { IsAuthenticated: false } &&
+//         !context.Request.Path.StartsWithSegments("/Identity") &&
+//         !context.Request.Path.StartsWithSegments("/lib") &&
+//         !context.Request.Path.StartsWithSegments("/css") &&
+//         !context.Request.Path.StartsWithSegments("/js"))
+//     {
+//         context.Response.Redirect("/Identity/Account/Login");
+//         return;
+//     }
+//     await next();
+// });
 
 app.MapControllerRoute(
     name: "default",
