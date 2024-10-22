@@ -1,44 +1,64 @@
-using System;
+
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace ATeam_MVC_WebApp.ViewModels
 {
     public class FoodProductViewModel
     {
+        public string ProductName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Product name is required.")]
-        [StringLength(100, ErrorMessage = "Product name cannot exceed 100 characters.")]
+        public decimal EnergyKcal { get; set; }
+
+        public decimal Fat { get; set; }
+
+        public decimal Carbohydrates { get; set; }
+
+        public decimal Protein { get; set; }
+
+        public decimal Fiber { get; set; }
+
+        public decimal Salt { get; set; }
+
+        public bool NokkelhullQualified { get; set; }
+
+        public string CategoryName { get; set; } = string.Empty;
+
+        public string CreatedByUsername { get; set; } = string.Empty;
+    }
+
+    // View Model for creating a new food product
+    public class CreateFoodProductViewModel
+    {
+        [Required]
+        [StringLength(100)]
         [Display(Name = "Product Name")]
         public string ProductName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Energy value is required.")]
-        [Range(0, 10000, ErrorMessage = "Energy (kcal) must be between 0 and 10,000.")]
+        [Required]
+        [Range(0, double.MaxValue)]
         [Display(Name = "Energy (kcal)")]
         public decimal EnergyKcal { get; set; }
 
-        [Required(ErrorMessage = "Fat value is required.")]
-        [Range(0, 100, ErrorMessage = "Fat must be between 0 and 100 grams.")]
-        [Display(Name = "Fat (g)")]
+        [Required]
+        [Range(0, double.MaxValue)]
         public decimal Fat { get; set; }
 
-        [Required(ErrorMessage = "Carbohydrates value is required.")]
-        [Range(0, 100, ErrorMessage = "Carbohydrates must be between 0 and 100 grams.")]
-        [Display(Name = "Carbohydrates (g)")]
+        [Required]
+        [Range(0, double.MaxValue)]
         public decimal Carbohydrates { get; set; }
 
-        [Required(ErrorMessage = "Protein value is required.")]
-        [Range(0, 100, ErrorMessage = "Protein must be between 0 and 100 grams.")]
-        [Display(Name = "Protein (g)")]
+        [Required]
+        [Range(0, double.MaxValue)]
         public decimal Protein { get; set; }
 
-        [Required(ErrorMessage = "Fiber value is required.")]
-        [Range(0, 100, ErrorMessage = "Fiber must be between 0 and 100 grams.")]
-        [Display(Name = "Fiber (g)")]
+        [Required]
+        [Range(0, double.MaxValue)]
         public decimal Fiber { get; set; }
 
-        [Required(ErrorMessage = "Salt value is required.")]
-        [Range(0, 10, ErrorMessage = "Salt must be between 0 and 10 grams.")]
-        [Display(Name = "Salt (g)")]
+        [Required]
+        [Range(0, double.MaxValue)]
         public decimal Salt { get; set; }
 
         [Display(Name = "Nøkkelhull Qualified")]
@@ -46,11 +66,17 @@ namespace ATeam_MVC_WebApp.ViewModels
 
         [Required]
         [Display(Name = "Category")]
-        public virtual FoodCategoryItemViewModel? Category { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
 
         [Required]
-        [Display(Name = "Created By")]
-        [StringLength(450)] 
-        public string CreatedByUsername { get; set; } = string.Empty;
+        [Display(Name = "CategoryId")]
+        public int CategoryId { get; set; }
+    }
+
+    // View Model for Editing an Existing food product, inherits from Create
+    public class EditFoodProductViewModel : CreateFoodProductViewModel
+    {
+        public int ProductId { get; set; }
     }
 }
+

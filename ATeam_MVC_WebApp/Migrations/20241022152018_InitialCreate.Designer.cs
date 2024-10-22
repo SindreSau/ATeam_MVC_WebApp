@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATeam_MVC_WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241018092552_CustomUser-FooProduct-FoodCategory")]
-    partial class CustomUserFooProductFoodCategory
+    [Migration("20241022152018_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,12 +22,13 @@ namespace ATeam_MVC_WebApp.Migrations
 
             modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodCategory", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("FoodCategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
@@ -36,22 +37,19 @@ namespace ATeam_MVC_WebApp.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("FoodCategoryId");
 
                     b.ToTable("FoodCategories");
                 });
 
             modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodProduct", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("FoodProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Carbohydrates")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -70,6 +68,9 @@ namespace ATeam_MVC_WebApp.Migrations
                     b.Property<decimal>("Fiber")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("FoodCategoryId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("NokkelhullQualified")
                         .HasColumnType("INTEGER");
 
@@ -87,11 +88,11 @@ namespace ATeam_MVC_WebApp.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
+                    b.HasKey("FoodProductId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("FoodCategoryId");
 
                     b.ToTable("FoodProducts");
                 });
@@ -157,11 +158,6 @@ namespace ATeam_MVC_WebApp.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -212,10 +208,6 @@ namespace ATeam_MVC_WebApp.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator().HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -297,25 +289,18 @@ namespace ATeam_MVC_WebApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ATeam_MVC_WebApp.Models.ApplicationUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.HasDiscriminator().HasValue("ApplicationUser");
-                });
-
             modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodProduct", b =>
                 {
-                    b.HasOne("ATeam_MVC_WebApp.Models.FoodCategory", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ATeam_MVC_WebApp.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ATeam_MVC_WebApp.Models.FoodCategory", "Category")
+                        .WithMany("FoodProducts")
+                        .HasForeignKey("FoodCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -372,6 +357,11 @@ namespace ATeam_MVC_WebApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ATeam_MVC_WebApp.Models.FoodCategory", b =>
+                {
+                    b.Navigation("FoodProducts");
                 });
 #pragma warning restore 612, 618
         }

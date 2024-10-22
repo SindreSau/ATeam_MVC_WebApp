@@ -17,13 +17,16 @@ namespace ATeam_MVC_WebApp.Repositories
         }
 
         // Asynchronously retrieves a paginated list of food products based on filter and sort criteria
-        public async Task<IEnumerable<FoodProduct>> GetFoodProductsAsync(int pageNumber, int pageSize, string orderBy, bool nokkelhull)
+        public async Task<IEnumerable<FoodProduct>> GetFoodProductsAsync(int pageNumber, int pageSize, string orderBy, bool? nokkelhull)
         {
             // Create a queryable collection of food products
             var query = _context.FoodProducts.AsQueryable();
 
             // Filter products based on whether they are Nokkelhull qualified
-            query = query.Where(fp => fp.NokkelhullQualified == nokkelhull);
+            if (nokkelhull != null)
+            {
+                query = query.Where(fp => fp.NokkelhullQualified == nokkelhull);
+            }
 
             // Apply sorting based on the specified order
             switch (orderBy.ToLower())

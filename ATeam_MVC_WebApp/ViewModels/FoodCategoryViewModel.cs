@@ -23,8 +23,15 @@ namespace ATeam_MVC_WebApp.ViewModels
     public int Id { get; set; }
 
     [Display(Name = "Category")]
-    public required string CategoryName { get; set; }
+    public required string? CategoryName { get; set; }
 
     // public string Description { get; set; }
+  }
+
+  public class FoodCategoryCreateViewModel
+  {
+    [Required]
+    [Display(Name = "Category")]
+    public string? CategoryName { get; set; }
   }
 }

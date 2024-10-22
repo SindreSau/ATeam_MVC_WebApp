@@ -57,7 +57,6 @@ namespace ATeam_MVC_WebApp.Repositories
       // Saves changes to database
       await _context.SaveChangesAsync();
       return existingCategory;
-
     }
 
     // Asynchronously deletes a food category by its ID
