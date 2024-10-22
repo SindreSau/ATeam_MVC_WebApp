@@ -35,6 +35,30 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Identity/Account/Logout";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+
+    // Cookie settings
+    options.ExpireTimeSpan = TimeSpan.FromDays(30); // The cookie will expire after X days
+    options.Cookie.HttpOnly = true; // Prevents JavaScript from accessing the cookie
+    options.SlidingExpiration = false; // Automatically refresh the cookie expiration time if the user is active
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensures the cookie is sent only over HTTPS
+
+    // Max age
+    options.Cookie.MaxAge = TimeSpan.FromDays(30); // The cookie will expire after X minutes
+
+    // If the user is not authenticated, redirect to the login page
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.Redirect("/Identity/Account/Login");
+        return Task.CompletedTask;
+    };
+});
+
+// Configure session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromDays(30); // The user will be logged out after X days of inactivity
+    options.Cookie.HttpOnly = true; // Prevents JavaScript from accessing the cookie
+    options.Cookie.IsEssential = true; // The session cookie is essential
 });
 
 var app = builder.Build();
@@ -51,23 +75,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Redirect to login if not authenticated
-app.Use(async (context, next) =>
-{
-    if (context.User.Identity is { IsAuthenticated: false } &&
-        !context.Request.Path.StartsWithSegments("/Identity") &&
-        !context.Request.Path.StartsWithSegments("/lib") &&
-        !context.Request.Path.StartsWithSegments("/css") &&
-        !context.Request.Path.StartsWithSegments("/js"))
-    {
-        context.Response.Redirect("/Identity/Account/Login");
-        return;
-    }
-    await next();
-});
 
 app.MapControllerRoute(
     name: "default",
