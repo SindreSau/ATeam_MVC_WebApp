@@ -68,7 +68,7 @@ namespace ATeam_MVC_WebApp.Repositories
         {
             // Find and return the food product by ID
             var foodProduct = await _context.FoodProducts.FindAsync(id);
-            return foodProduct;
+            return foodProduct ?? throw new KeyNotFoundException($"FoodProduct with ID {id} not found.");
         }
 
         // Asynchronously adds a new food product to the database
@@ -84,11 +84,16 @@ namespace ATeam_MVC_WebApp.Repositories
         // Asynchronously updates an existing food product in the database
         public async Task<FoodProduct> UpdateFoodProductAsync(FoodProduct foodProduct)
         {
-            // Update the food product in the context
-            _context.FoodProducts.Update(foodProduct);
-            // Save changes to the database
+            var existingFoodProduct = await _context.FoodProducts.FindAsync(foodProduct.FoodProductId);
+            if (existingFoodProduct == null)
+            {
+                throw new KeyNotFoundException($"FoodCategory with ID {foodProduct.FoodProductId} not found. Could not update.");
+            }
+
+            existingFoodProduct.ProductName = foodProduct.ProductName;
+            _context.FoodProducts.Update(existingFoodProduct);
             await _context.SaveChangesAsync();
-            return foodProduct; // Return the updated product
+            return existingFoodProduct;
         }
 
         // Asynchronously deletes a food product by its ID
