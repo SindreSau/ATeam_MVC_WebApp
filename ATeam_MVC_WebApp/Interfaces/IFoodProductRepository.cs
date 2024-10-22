@@ -18,4 +18,7 @@ public interface IFoodProductRepository
 
     // delete a food product
     Task<bool> DeleteFoodProductAsync(int id);
+    //oskar, gjorde dette får å få til view
+     Task<IEnumerable<FoodProduct>> GetAll();
+
 }
