@@ -1,11 +1,7 @@
 using ATeam_MVC_WebApp.Data;
-<<<<<<< HEAD
 using ATeam_MVC_WebApp.Interfaces;
 using ATeam_MVC_WebApp.Repositories;
-using Microsoft.AspNetCore.Hosting.Server.Features;
-=======
 using Microsoft.AspNetCore.Identity;
->>>>>>> origin/staging
 using Microsoft.EntityFrameworkCore;
 
 // ====================================== //
@@ -38,19 +34,6 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddSession();
 
-<<<<<<< HEAD
-    // Add controllers with support for views
-    builder.Services.AddControllersWithViews();
-    builder.Services.AddScoped<IFoodProductRepository, FoodProductRepository>();
-    builder.Services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
-
-
-    // Configure the database
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    {
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-    });
-=======
 // Configure application cookie
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -63,22 +46,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true; // Prevents JavaScript from accessing the cookie
     options.SlidingExpiration = false; // Automatically refresh the cookie expiration time if the user is active
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensures the cookie is sent only over HTTPS
->>>>>>> origin/staging
 
     // Max age
     options.Cookie.MaxAge = TimeSpan.FromDays(30); // The cookie will expire after X minutes
 
-<<<<<<< HEAD
-    // === APP CONFIGURATION === //
-    Log.Information("Configuring application...");
-    var app = builder.Build();
-    Seed.SeedData(app);
-
-    if (!app.Environment.IsDevelopment())
-=======
     // If the user is not authenticated, redirect to the login page
     options.Events.OnRedirectToLogin = context =>
->>>>>>> origin/staging
     {
         context.Response.Redirect("/Identity/Account/Login");
         return Task.CompletedTask;
