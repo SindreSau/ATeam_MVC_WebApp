@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using.ATeam_MVC_WebApp.Repositories;
-using.ATeam_MVC_WebApp.Models;
-using.ATeam_MVC_WebApp.ViewModels:
+using ATeam_MVC_WebApp.Repositories;
+using ATeam_MVC_WebApp.Models;
+using ATeam_MVC_WebApp.ViewModels;
+using ATeam_MVC_WebApp.Interfaces;
 
 namespace ATeam_MVC_WebApp.Controllers;
 
@@ -11,20 +12,21 @@ public class AdminController : Controller
     private readonly IFoodProductRepository _foodProductRepository;
     private readonly IFoodCategoryRepository _foodCategoryRepository;
 
-    public AdminController(IFoodCategoryRepository foodCategoryRepository)
+    public AdminController(IFoodProductRepository foodProductRepository, IFoodCategoryRepository foodCategoryRepository)
     {
+        _foodProductRepository = foodProductRepository;
         _foodCategoryRepository = foodCategoryRepository;
     }
 
-    public async Task<IActionResult> ViewFoodProducts()
+    public async Task<IActionResult> ViewFoodProducts(int pageNumber = 1, int pageSize = 10, string orderBy = "productname", bool nokkelhull = false)
     {
-        var products = await _foodProductRepository.GetFoodProductAsync():
-        if (products = null)
+        var products = await _foodProductRepository.GetFoodProductsAsync(pageNumber, pageSize, orderBy, nokkelhull);
+        if (products == null || !products.Any())
         {
-            return NotFound("FoodProduct list not found");
+            return NotFound("No food products found.");
         }
 
-        var foodProductViewModels = products.Select(foodProductViewModels => new FoodProductViewModel
+        var foodProductViewModels = products.Select(fp => new FoodProductViewModel
         {
             ProductName = fp.ProductName,
             EnergyKcal = fp.EnergyKcal,
@@ -34,10 +36,15 @@ public class AdminController : Controller
             Fiber = fp.Fiber,
             Salt = fp.Salt,
             NokkelhullQualified = fp.NokkelhullQualified,
-            CreatedById = fp.CreatedById
+            CreatedByUsername = fp.CreatedBy.UserName,
+            Category = new FoodCategoryItemViewModel
+        {
+            CategoryName = fp.Category.CategoryName
+        }
+
         }).ToList();
 
-        return ViewFoodProducts(foodProductViewModels);
+        return View(foodProductViewModels);
     }
 
 
@@ -52,18 +59,18 @@ public class AdminController : Controller
     {
         if (ModelState.IsValid)
         {
-            var category = new FoodCategory
+            var category = new FoodCategory;
             {
-                CategoryName = model.CategoryName
+                CategoryName = model.CategoryName;
             };
 
             bool returnOk = await _foodCategoryRepository.AddCategoryAsync(category);
             if (returnOk)
             {
-                return RedirectToAction()
+                return RedirectToAction();
             }
 
-            return View(category)
+            return View(category);
         }
     }
 
