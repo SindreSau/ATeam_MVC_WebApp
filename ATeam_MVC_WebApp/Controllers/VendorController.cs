@@ -102,7 +102,7 @@ public class VendorController : Controller
       Fiber = model.Fiber,
       Salt = model.Salt,
       NokkelhullQualified = model.NokkelhullQualified,
-      CategoryId = model.CategoryId,
+      FoodCategoryId = model.CategoryId,
       CreatedById = userId,
       CreatedAt = DateTime.UtcNow,
       UpdatedAt = DateTime.UtcNow
@@ -148,7 +148,7 @@ public class VendorController : Controller
       Fiber = product.Fiber,
       Salt = product.Salt,
       NokkelhullQualified = product.NokkelhullQualified,
-      CategoryId = product.CategoryId,
+      CategoryId = product.FoodCategoryId,
     };
 
     return View(viewModel);
@@ -188,7 +188,7 @@ public class VendorController : Controller
     existingProduct.Fiber = model.Fiber;
     existingProduct.Salt = model.Salt;
     existingProduct.NokkelhullQualified = model.NokkelhullQualified;
-    existingProduct.CategoryId = model.CategoryId;
+    existingProduct.FoodCategoryId = model.CategoryId;
     existingProduct.UpdatedAt = DateTime.UtcNow;
 
     await _foodProductRepository.UpdateFoodProductAsync(existingProduct);
