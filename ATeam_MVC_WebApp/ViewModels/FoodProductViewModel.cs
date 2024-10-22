@@ -5,6 +5,22 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace ATeam_MVC_WebApp.ViewModels
 {
+    // View Model for displaying paginated list of food products
+    public class FoodProductListViewModel
+    {
+        public List<FoodProductViewModel> FoodProducts { get; set; } = new List<FoodProductViewModel>();
+
+        public int PageNumber { get; set; }
+
+        public int PageSize { get; set; }
+
+        public int TotalCount { get; set; }
+
+        public string OrderBy { get; set; } = string.Empty;
+
+        public bool? Nokkelhull { get; set; }
+    }
+
     public class FoodProductViewModel
     {
         public string ProductName { get; set; } = string.Empty;

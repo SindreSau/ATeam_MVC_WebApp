@@ -1,4 +1,6 @@
 using ATeam_MVC_WebApp.Data;
+using ATeam_MVC_WebApp.Interfaces;
+using ATeam_MVC_WebApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,6 +66,9 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // The session cookie is essential
 });
 
+// Add the repository services
+builder.Services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
+builder.Services.AddScoped<IFoodProductRepository, FoodProductRepository>();
 
 // ===================================== //
 // === Add services to the container === //
@@ -105,7 +110,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Vendor}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 
