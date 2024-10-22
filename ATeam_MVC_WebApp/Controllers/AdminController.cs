@@ -57,21 +57,24 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateCategory(FoodCategoryViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var category = new FoodCategory;
-            {
-                CategoryName = model.CategoryName;
-            };
-
-            bool returnOk = await _foodCategoryRepository.AddCategoryAsync(category);
-            if (returnOk)
-            {
-                return RedirectToAction();
-            }
-
-            return View(category);
+            return View(model);
         }
+
+        var category = new FoodCategory
+        {
+            CategoryName = model.Categories.FirstOrDefault().CategoryName
+        };
+
+        bool returnOk = await _foodCategoryRepository.AddCategoryAsync(category);
+        if (returnOk)
+        {
+            return RedirectToAction();
+        }
+
+        return View(category);
+
     }
 
 }
