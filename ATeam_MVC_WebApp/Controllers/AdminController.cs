@@ -8,7 +8,6 @@ namespace ATeam_MVC_WebApp.Controllers;
 
 public class AdminController : Controller
 {
-
     private readonly IFoodProductRepository _foodProductRepository;
     private readonly IFoodCategoryRepository _foodCategoryRepository;
 
@@ -18,10 +17,19 @@ public class AdminController : Controller
         _foodCategoryRepository = foodCategoryRepository;
     }
 
-    public async Task<IActionResult> ViewFoodProducts(int pageNumber = 1, int pageSize = 10, string orderBy = "productname", bool nokkelhull = false)
+    public async Task<IActionResult> ViewFoodProducts(
+        int pageNumber = 1,
+        int pageSize = 10,
+        string orderBy = "productname",
+        bool? nokkelhull = null
+    )
     {
         var products = await _foodProductRepository.GetFoodProductsAsync(pageNumber, pageSize, orderBy, nokkelhull);
-        if (products == null || !products.Any())
+
+        // Store the products in a list to avoid multiple enumeration
+        var productsList = products.ToList();
+
+        if (!productsList.Any())
         {
             return NotFound("No food products found.");
         }
@@ -36,12 +44,8 @@ public class AdminController : Controller
             Fiber = fp.Fiber,
             Salt = fp.Salt,
             NokkelhullQualified = fp.NokkelhullQualified,
-            CreatedByUsername = fp.CreatedBy.UserName,
-            Category = new FoodCategoryItemViewModel
-        {
-            CategoryName = fp.Category.CategoryName
-        }
-
+            CreatedByUsername = fp.CreatedBy?.UserName ?? "Unknown", // Added null check
+            CategoryName = fp.Category?.CategoryName ?? "Unknown" // Added null check
         }).ToList();
 
         return View(foodProductViewModels);
@@ -55,7 +59,7 @@ public class AdminController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCategory(FoodCategoryViewModel model)
+    public async Task<IActionResult> CreateCategory(FoodCategoryCreateViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -64,7 +68,7 @@ public class AdminController : Controller
 
         var category = new FoodCategory
         {
-            CategoryName = model.Categories.FirstOrDefault().CategoryName
+            CategoryName = model.CategoryName
         };
 
         bool returnOk = await _foodCategoryRepository.AddCategoryAsync(category);
@@ -73,8 +77,6 @@ public class AdminController : Controller
             return RedirectToAction();
         }
 
-        return View(category);
-
+        return View(model);
     }
-
 }
