@@ -1,4 +1,5 @@
 using ATeam_MVC_WebApp.Models;
+using ATeam_MVC_WebApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,66 +20,33 @@ public static class DbSeeder
         await context.Database.MigrateAsync();
 
         await SeedRoles(roleManager);
-        var adminId = await SeedAdmin(userManager);
-        var testId = await SeedTestUser(userManager);
-        await SeedCategories(context, adminId);
-        await SeedFoodProducts(context, testId);
-        
+        await SeedAdmin(userManager);
+        await SeedCategories(context);
     }
 
-    private static async Task<string> SeedAdmin(UserManager<IdentityUser> userManager)
+    private static async Task SeedAdmin(UserManager<IdentityUser> userManager)
     {
         const string adminEmail = "admin@foodapp.com";
         const string adminPassword = "Admin123!";
 
         var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
-        if (existingAdmin != null)
+
+        if (existingAdmin == null)
         {
-            return existingAdmin.Id;
+            var admin = new IdentityUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail
+            };
+
+            var result = await userManager.CreateAsync(admin, adminPassword);
+            if (!result.Succeeded)
+            {
+                throw new Exception($"Failed to create admin user: {string.Join(", ", result.Errors)}");
+            }
+
+            await userManager.AddToRoleAsync(admin, "Admin");
         }
-
-        var admin = new IdentityUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            EmailConfirmed = true
-        };
-
-        var result = await userManager.CreateAsync(admin, adminPassword);
-        if (!result.Succeeded)
-        {
-            throw new Exception($"Failed to create admin user: {string.Join(", ", result.Errors)}");
-        }
-
-        await userManager.AddToRoleAsync(admin, "Admin");
-        return admin.Id;
-    }
-    private static async Task<string> SeedTestUser(UserManager<IdentityUser> userManager)
-    {
-        const string testEmail = "test@foodapp.com";
-        const string testPassword = "Test123!";
-
-        var existingTest = await userManager.FindByEmailAsync(testEmail);
-        if (existingTest != null)
-        {
-            return existingTest.Id;
-        }
-
-        var test = new IdentityUser
-        {
-            UserName = testEmail,
-            Email = testEmail,
-            EmailConfirmed = true
-        };
-
-        var result = await userManager.CreateAsync(test, testPassword);
-        if (!result.Succeeded)
-        {
-            throw new Exception($"Failed to create admin user: {string.Join(", ", result.Errors)}");
-        }
-
-        await userManager.AddToRoleAsync(test, "Vendor");
-        return test.Id;
     }
 
     private static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
@@ -94,7 +62,7 @@ public static class DbSeeder
         }
     }
 
-    private static async Task SeedCategories(ApplicationDbContext context, string adminId)
+    private static async Task SeedCategories(ApplicationDbContext context)
     {
         if (!context.FoodCategories.Any())
         {
@@ -125,175 +93,103 @@ public static class DbSeeder
             await context.SaveChangesAsync();
         }
     }
-    private static async Task SeedFoodProducts(ApplicationDbContext context, string testId)
+
+    private static async Task SeedTestVendor(UserManager<IdentityUser> userManager)
     {
-        if (!context.FoodProducts.Any())
+        // Create test vendor (user with role Vendor) if it doesn't exist
+        const string vendorEmail = "vendor@foodapp.com";
+        const string vendorPassword = "Vendor123!";
+
+        var existingVendor = await userManager.FindByEmailAsync(vendorEmail);
+
+        if (existingVendor == null)
         {
-            var foodProduct = new List<FoodProduct>
+            var vendor = new IdentityUser
+            {
+                UserName = vendorEmail,
+                Email = vendorEmail
+            };
+
+            var result = await userManager.CreateAsync(vendor, vendorPassword);
+            if (!result.Succeeded)
+            {
+                throw new Exception($"Failed to create vendor user: {string.Join(", ", result.Errors)}");
+            }
+
+            await userManager.AddToRoleAsync(vendor, "Vendor");
+        }
+    }
+
+    public static async Task SeedTestVendorWithTestProducts(
+        UserManager<IdentityUser> userManager,
+        ApplicationDbContext context)
+    {
+        await SeedTestVendor(userManager);
+
+        var vendor = await userManager.FindByEmailAsync("vendor@foodapp.com");
+
+        // Create test products for the test vendor if they don't exist
+        var vendorId = vendor?.Id;
+
+        var existingProducts = await context.FoodProducts
+            .Where(p => p.CreatedById == vendorId)
+            .ToListAsync();
+
+        if (vendorId != null && existingProducts.Count == 0)
+        {
+            var products = new[]
             {
                 new FoodProduct
                 {
-                    ProductName = "Eple",
-                    EnergyKcal = 52,
-                    Fat = 0.2M, // Thin
-                    Carbohydrates = 14,
-                    Protein = 0.3M,
-                    Fiber = 2.4M,
-                    Salt = 0,
-                    NokkelhullQualified = true,
-                    FoodCategoryId = 1,
-                    CreatedById = testId,
+                    ProductName = "Grandiosa",
+                    EnergyKcal = 40,
+                    Protein = 12,
+                    Carbohydrates = 17,
+                    Fat = 11,
+                    Fiber = 14,
+                    Salt = 6,
+                    NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(40, 12, 17, 11, 14, 6),
                     CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    UpdatedAt = DateTime.UtcNow,
+                    CreatedById = vendorId,
+                    FoodCategoryId = 10
                 },
-
                 new FoodProduct
                 {
-                    ProductName = "Banan",
-                    EnergyKcal = 89,
-                    Fat = 0.3M, // Thin
-                    Carbohydrates = 23,
-                    Protein = 1.1M,
-                    Fiber = 2.6M,
-                    Salt = 0,
-                    NokkelhullQualified = true,
-                    FoodCategoryId = 1,
-                    CreatedById = testId,
+                    ProductName = "Spaghetti",
+                    EnergyKcal = 32,
+                    Protein = 8,
+                    Carbohydrates = 22,
+                    Fat = 5,
+                    Fiber = 3,
+                    Salt = 1,
+                    NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(32, 8, 22, 5, 3, 1),
                     CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    UpdatedAt = DateTime.UtcNow,
+                    CreatedById = vendorId,
+                    FoodCategoryId = 3
                 },
-
+                // This should be nokkelhull qualified
                 new FoodProduct
                 {
-                    ProductName = "Kyllingbryst",
-                    EnergyKcal = 165,
-                    Fat = 3.6M, // Thick
-                    Carbohydrates = 0,
-                    Protein = 31,
-                    Fiber = 0,
-                    Salt = 0.1M,
-                    NokkelhullQualified = true,
-                    FoodCategoryId = 8,
-                    CreatedById = testId,
+                    ProductName = "Knekkebrød",
+                    EnergyKcal = 30,
+                    Protein = 10,
+                    Carbohydrates = 32,
+                    Fat = 2,
+                    Fiber = 7,
+                    Salt = 1,
+                    NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(30, 10, 32, 2, 7, 1),
                     CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    UpdatedAt = DateTime.UtcNow,
+                    CreatedById = vendorId,
+                    FoodCategoryId = 3
                 },
-
-                new FoodProduct
-                {
-                    ProductName = "Brød",
-                    EnergyKcal = 250,
-                    Fat = 4.5M, // Thick
-                    Carbohydrates = 47,
-                    Protein = 8.5M,
-                    Fiber = 3.5M,
-                    Salt = 1.2M,
-                    NokkelhullQualified = false,
-                    FoodCategoryId = 3,
-                    CreatedById = testId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-
-                new FoodProduct
-                {
-                    ProductName = "Yoghurt naturell",
-                    EnergyKcal = 59,
-                    Fat = 3.3M, // Thick
-                    Carbohydrates = 4.7M,
-                    Protein = 3.5M,
-                    Fiber = 0,
-                    Salt = 0.1M,
-                    NokkelhullQualified = true,
-                    FoodCategoryId = 4,
-                    CreatedById = testId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-
-                new FoodProduct
-                {
-                    ProductName = "Brokkoli",
-                    EnergyKcal = 34,
-                    Fat = 0.4M, // Thin
-                    Carbohydrates = 7,
-                    Protein = 2.8M,
-                    Fiber = 2.6M,
-                    Salt = 0,
-                    NokkelhullQualified = true,
-                    FoodCategoryId = 1,
-                    CreatedById = testId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-
-                new FoodProduct
-                {
-                    ProductName = "Laks",
-                    EnergyKcal = 208,
-                    Fat = 13, // Thick
-                    Carbohydrates = 0,
-                    Protein = 20,
-                    Fiber = 0,
-                    Salt = 0.1M,
-                    NokkelhullQualified = true,
-                    FoodCategoryId = 7,
-                    CreatedById = testId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-
-                new FoodProduct
-                {
-                    ProductName = "Havregryn",
-                    EnergyKcal = 389,
-                    Fat = 7, // Thick
-                    Carbohydrates = 66,
-                    Protein = 17,
-                    Fiber = 10.6M,
-                    Salt = 0.01M,
-                    NokkelhullQualified = true,
-                    FoodCategoryId = 3,
-                    CreatedById = testId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-
-                new FoodProduct
-                {
-                    ProductName = "Skummet melk",
-                    EnergyKcal = 34,
-                    Fat = 0.1M, // Thin
-                    Carbohydrates = 5,
-                    Protein = 3.4M,
-                    Fiber = 0,
-                    Salt = 0.1M,
-                    NokkelhullQualified = true,
-                    FoodCategoryId = 4,
-                    CreatedById = testId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-
-                new FoodProduct
-                {
-                    ProductName = "Egg",
-                    EnergyKcal = 155,
-                    Fat = 11, // Thick
-                    Carbohydrates = 1.1M,
-                    Protein = 13,
-                    Fiber = 0,
-                    Salt = 0.4M,
-                    NokkelhullQualified = false,
-                    FoodCategoryId = 2,
-                    CreatedById = testId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                }
             };
 
-            await context.FoodProducts.AddRangeAsync(foodProduct);
-            await context.SaveChangesAsync();
+            await context.FoodProducts.AddRangeAsync(products);
         }
+
+        await context.SaveChangesAsync();
     }
 }

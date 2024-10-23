@@ -1,12 +1,23 @@
-
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+
 
 namespace ATeam_MVC_WebApp.ViewModels
 {
+    // View Model for displaying paginated list of food products
+    public class FoodProductListViewModel
+    {
+        public List<FoodProductViewModel> FoodProducts { get; set; } = new List<FoodProductViewModel>();
+
+        public PaginationViewModel Pagination { get; set; } = new();
+
+        public string OrderBy { get; set; } = string.Empty;
+
+        public bool? Nokkelhull { get; set; }
+    }
+
     public class FoodProductViewModel
     {
+        public int ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
 
         public decimal EnergyKcal { get; set; }

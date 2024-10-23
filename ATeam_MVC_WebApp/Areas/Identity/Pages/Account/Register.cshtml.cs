@@ -25,8 +25,8 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
-        public string ReturnUrl { get; set; }
+        public InputModel? Input { get; set; }
+        public string? ReturnUrl { get; set; }
 
         public class InputModel
         {
@@ -47,7 +47,7 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-        public void OnGet(string returnUrl = null)
+        public void OnGet(string? returnUrl = null)
         {
             ReturnUrl = returnUrl;
         }
@@ -64,6 +64,9 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    // Add the user to the default role "Vendor"
+                    await _userManager.AddToRoleAsync(user, "Vendor");
+
                     _logger.LogInformation("User created a new account with password.");
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
