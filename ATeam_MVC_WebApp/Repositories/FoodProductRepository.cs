@@ -66,6 +66,69 @@ namespace ATeam_MVC_WebApp.Repositories
             return await query.ToListAsync();
         }
 
+        // Get paginated food products by vendor ID with filter and sort criteria
+        public async Task<IEnumerable<FoodProduct>> GetFoodProductsByVendorAsync(string vendorId, int pageNumber, int pageSize, string orderBy, bool? nokkelhull)
+        {
+            // Create a queryable collection of food products
+            var query = _context.FoodProducts
+                .Include(fp => fp.Category)
+                .Include(fp => fp.CreatedBy)
+                .Where(fp => fp.CreatedById == vendorId) // Filter by vendor ID
+                .AsQueryable();
+
+            // Filter products based on whether they are Nokkelhull qualified
+            if (nokkelhull != null)
+            {
+                query = query.Where(fp => fp.NokkelhullQualified == nokkelhull);
+            }
+
+            // Apply sorting based on the specified order
+            switch (orderBy.ToLower())
+            {
+                case "productname":
+                    query = query.OrderBy(fp => fp.ProductName);
+                    break;
+                case "energykcal":
+                    query = query.OrderBy(fp => fp.EnergyKcal);
+                    break;
+                case "fat":
+                    query = query.OrderBy(fp => fp.Fat);
+                    break;
+                case "carbohydrates":
+                    query = query.OrderBy(fp => fp.Carbohydrates);
+                    break;
+                case "protein":
+                    query = query.OrderBy(fp => fp.Protein);
+                    break;
+                case "fiber":
+                    query = query.OrderBy(fp => fp.Fiber);
+                    break;
+                case "salt":
+                    query = query.OrderBy(fp => fp.Salt);
+                    break;
+                default:
+                    query = query.OrderBy(fp => fp.FoodProductId); // Default ordering by Id
+                    break;
+            }
+
+            // Apply pagination
+            query = query
+                .Skip((pageNumber - 1) * pageSize) // Skip the previous pages
+                .Take(pageSize); // Take the specified number of records for the current page
+
+            // Execute the query and return the list of food products
+            return await query.ToListAsync();
+        }
+
+        // Get the count of food products by vendor
+        public async Task<int> GetFoodProductsByVendorCountAsync(string vendorId)
+        {
+            // Count the number of food products by the specified vendor
+            return await _context.FoodProducts
+                .Where(fp => fp.CreatedById == vendorId)
+                .CountAsync();
+        }
+
         // Asynchronously retrieves a specific food product by its ID
         public async Task<FoodProduct> GetFoodProductAsync(int id) 
         {

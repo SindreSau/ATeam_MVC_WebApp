@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Differencing;
 namespace ATeam_MVC_WebApp.Controllers;
 
 // Controller for vendors to manage their food products - requires authentication
-[Authorize]
+[Authorize(Roles = "Vendor")]
 public class VendorController : Controller
 {
   // Repositories for Database operations:
@@ -25,40 +25,44 @@ public class VendorController : Controller
 
   // ======== DISPLAY ALL PRODUCTS ======== 
   // Displays a paginated list of food products owned by the current vendor
-  public async Task<IActionResult> MyProducts(int pageNumber = 1, int pageSize = 10, string orderBy = "productname", bool? nokkelhull = null)
+  public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string orderBy = "productid", bool? nokkelhull = null)
   {
-    // Get the current user's ID from their claims
+    // Get the current user's ID
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     if (string.IsNullOrEmpty(userId))
     {
       return Unauthorized();
     }
 
-    // Get products and filter to show only those created by the current vendor
-    var products = await _foodProductRepository.GetFoodProductsAsync(pageNumber, pageSize, orderBy, nokkelhull);
-    var vendorProducts = products.Where(p => p.CreatedById == userId).ToList();
-
-    if (!vendorProducts.Any())
+    // Get the vendor's food products
+    var products = await _foodProductRepository.GetFoodProductsByVendorAsync(userId, pageNumber, pageSize, orderBy, nokkelhull);
+    var viewModel = new FoodProductListViewModel
     {
-      return View(new List<FoodProductViewModel>());
-    }
+      FoodProducts = products.Select(fp => new FoodProductViewModel
+      {
+        ProductId = fp.FoodProductId,
+        ProductName = fp.ProductName,
+        EnergyKcal = fp.EnergyKcal,
+        Fat = fp.Fat,
+        Carbohydrates = fp.Carbohydrates,
+        Protein = fp.Protein,
+        Fiber = fp.Fiber,
+        Salt = fp.Salt,
+        NokkelhullQualified = fp.NokkelhullQualified,
+        CategoryName = fp.Category?.CategoryName ?? "Unknown",
+        CreatedByUsername = fp.CreatedBy?.UserName ?? "Unknown"
+      }).ToList(),
+      Pagination = new PaginationViewModel
+      {
+        CurrentPage = pageNumber,
+        PageSize = pageSize,
+        TotalCount = await _foodProductRepository.GetFoodProductsByVendorCountAsync(userId),
+      },
+      OrderBy = orderBy,
+      Nokkelhull = nokkelhull
+    };
 
-    // Convert the products to view models for display
-    var foodProductViewModels = vendorProducts.Select(fp => new FoodProductViewModel
-    {
-      ProductName = fp.ProductName,
-      EnergyKcal = fp.EnergyKcal,
-      Fat = fp.Fat,
-      Carbohydrates = fp.Carbohydrates,
-      Protein = fp.Protein,
-      Fiber = fp.Fiber,
-      Salt = fp.Salt,
-      NokkelhullQualified = fp.NokkelhullQualified,
-      CategoryName = fp.Category?.CategoryName ?? "Unknown", // Null check
-      CreatedByUsername = fp.CreatedBy?.UserName ?? "Unknown" // Null check 
-    }).ToList();
-
-    return View(foodProductViewModels);
+    return View(viewModel);
   }
 
 
@@ -110,7 +114,7 @@ public class VendorController : Controller
 
     await _foodProductRepository.AddFoodProductAsync(foodProduct);
     // After adding new product, returns to view of MyProducts
-    return RedirectToAction(nameof(MyProducts));
+    return RedirectToAction(nameof(Index));
   }
 
 
@@ -192,7 +196,7 @@ public class VendorController : Controller
     existingProduct.UpdatedAt = DateTime.UtcNow;
 
     await _foodProductRepository.UpdateFoodProductAsync(existingProduct);
-    return RedirectToAction(nameof(MyProducts)); // Returns to MyProducts method, which sends Vendor back to seeing their products 
+    return RedirectToAction(nameof(Index)); // Returns to MyProducts method, which sends Vendor back to seeing their products
   }
 
   // ======== DELETE ======== 
@@ -215,6 +219,6 @@ public class VendorController : Controller
     }
 
     await _foodProductRepository.DeleteFoodProductAsync(id);
-    return RedirectToAction(nameof(MyProducts));
+    return RedirectToAction(nameof(Index));
   }
 }
