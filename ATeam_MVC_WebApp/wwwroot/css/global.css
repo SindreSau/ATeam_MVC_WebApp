@@ -1,0 +1,30 @@
+:root {
+
+}
+
+button, a.btn, input[type="submit"], input[type="button"] {
+    transition: outline 0.1s ease-in-out; /* Smooth transition for the outline */
+}
+
+button:focus, a.btn:focus, input[type="submit"]:focus, input[type="button"]:focus {
+    outline: 2px solid #007bff; /* Add outline on focus */
+    outline-offset: 2px;
+}
+
+#theme-toggle:focus {
+    outline: 2px solid #007bff; /* Add focus outline for the theme toggle button */
+    outline-offset: 2px;
+}
+
+.btn-primary:focus {
+    outline: 2px solid #007bff; /* Ensure the Create Product button has focus outline */
+    outline-offset: 2px;
+}
+
+#theme-icon {
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+}
+#theme-icon.ready {
+    opacity: 1;
+}

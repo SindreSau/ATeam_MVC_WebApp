@@ -3,7 +3,12 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="ATeam_MVC_WebApp - A simple web application for managing food products and seeing if they are qualified for Nøkkelhull"/>
     <title>@ViewData["Title"] - ATeam_MVC_WebApp</title>
+    <meta name="color-scheme" content="light dark">
+
+    @* set the theme before page load *@
+    <script src="~/js/preload-theme.js"></script>
 
     @* Add FastBootstrap *@
     <link href="https://cdn.jsdelivr.net/npm/fastbootstrap@2.2.0/dist/css/fastbootstrap.min.css" rel="stylesheet" integrity="sha256-V6lu+OdYNKTKTsVFBuQsyIlDiRWiOmtC8VQ8Lzdm2i4=" crossorigin="anonymous">
@@ -14,42 +19,7 @@
     <link rel="icon" type="image/svg" href="~/favicon.svg"/>
 
     <!-- Add global styles -->
-    <style>
-        :root {
-            transition: color-scheme .3s ease-in-out,
-            background-color .3s ease-in-out,
-            border-color .3s ease-in-out,
-            box-shadow .3s ease-in-out,
-            color .3s ease-in-out;
-        }
-
-        .theme-icon-transition {
-            transition: transform .3s ease-in-out;
-        }
-
-        .theme-icon-transition:hover {
-            transform: rotate(25deg);
-        }
-
-        button, a.btn, input[type="submit"], input[type="button"] {
-            transition: outline 0.1s ease-in-out; /* Smooth transition for the outline */
-        }
-
-        button:focus, a.btn:focus, input[type="submit"]:focus, input[type="button"]:focus {
-            outline: 2px solid #007bff; /* Add outline on focus */
-            outline-offset: 2px;
-        }
-
-        #theme-toggle:focus {
-            outline: 2px solid #007bff; /* Add focus outline for the theme toggle button */
-            outline-offset: 2px;
-        }
-
-        .btn-primary:focus {
-            outline: 2px solid #007bff; /* Ensure the Create Product button has focus outline */
-            outline-offset: 2px;
-        }
-    </style>
+    <link href="~/css/global.css" rel="stylesheet"/>
 </head>
 <body class="min-vh-100 d-flex flex-column">
 <header>
@@ -108,51 +78,6 @@
 @await RenderSectionAsync("Scripts", required: false)
 
 @* Light/darkmode script *@
-<script>
-    (() => {
-        const getStoredTheme = () => localStorage.getItem('theme')
-        const setStoredTheme = theme => localStorage.setItem('theme', theme)
-
-        const getPreferredTheme = () => {
-            const storedTheme = getStoredTheme()
-            if (storedTheme) {
-                return storedTheme
-            }
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        }
-
-        const setTheme = theme => {
-            document.documentElement.setAttribute('data-bs-theme', theme)
-            // Update icon
-            const icon = document.getElementById('theme-icon')
-            if (theme === 'dark') {
-                icon.classList.remove('fa-sun')
-                icon.classList.add('fa-moon')
-            } else {
-                icon.classList.remove('fa-moon')
-                icon.classList.add('fa-sun')
-            }
-        }
-
-        // Set initial theme
-        setTheme(getPreferredTheme())
-
-        // Add click handler
-        document.getElementById('theme-toggle').addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-bs-theme')
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
-            setStoredTheme(newTheme)
-            setTheme(newTheme)
-        })
-
-        // Listen for system theme changes
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            const storedTheme = getStoredTheme()
-            if (storedTheme !== 'light' && storedTheme !== 'dark') {
-                setTheme(getPreferredTheme())
-            }
-        })
-    })()
-</script>
+<script src="js/theme-toggle.js"></script>
 </body>
 </html>
