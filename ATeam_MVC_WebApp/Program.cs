@@ -82,8 +82,15 @@ using (var scope = app.Services.CreateScope())
     {
         var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var context = services.GetRequiredService<ApplicationDbContext>();
 
         await DbSeeder.SeedData(services, userManager, roleManager);
+
+        // seed test data if in development
+        if (app.Environment.IsDevelopment())
+        {
+            await DbSeeder.SeedTestVendorWithTestProducts(userManager, context);
+        }
     }
     catch (Exception ex)
     {
