@@ -68,7 +68,7 @@ public class VendorController : Controller
 
   // ======== CREATE ======== 
   // Displays the form for creating a new food product
-  public async Task<IActionResult> CreateProduct()
+  public async Task<IActionResult> Create()
   {
     // Load categories for the dropdown
     var categories = await _foodCategoryRepository.GetAllCategoriesAsync();
@@ -79,7 +79,7 @@ public class VendorController : Controller
   // Handles the submission of a new food product
   [HttpPost]
   [ValidateAntiForgeryToken]
-  public async Task<IActionResult> CreateProduct(CreateFoodProductViewModel model)
+  public async Task<IActionResult> Create(CreateFoodProductViewModel model)
   {
     if (!ModelState.IsValid)
     {
