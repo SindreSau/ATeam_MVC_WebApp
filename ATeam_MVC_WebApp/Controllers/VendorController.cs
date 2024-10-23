@@ -50,7 +50,7 @@ public class VendorController : Controller
         Fiber = fp.Fiber,
         Salt = fp.Salt,
         NokkelhullQualified = fp.NokkelhullQualified,
-        CategoryName = fp.Category?.CategoryName ?? "Unknown",
+        CategoryName = fp.FoodCategory?.CategoryName ?? "Unknown",
         CreatedByUsername = fp.CreatedBy?.UserName ?? "Unknown"
       }).ToList(),
       Pagination = new PaginationViewModel

@@ -71,7 +71,7 @@ namespace ATeam_MVC_WebApp.Repositories
         {
             // Create a queryable collection of food products
             var query = _context.FoodProducts
-                .Include(fp => fp.Category)
+                .Include(fp => fp.FoodCategory)
                 .Include(fp => fp.CreatedBy)
                 .Where(fp => fp.CreatedById == vendorId) // Filter by vendor ID
                 .AsQueryable();
