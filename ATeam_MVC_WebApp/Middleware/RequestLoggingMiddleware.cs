@@ -30,9 +30,10 @@ public class RequestLoggingMiddleware
             using (LogContext.PushProperty("UserAgent", context.Request.Headers.UserAgent.ToString()))
             using (LogContext.PushProperty("UserId", userId ?? "anonymous"))
             {
-                _logger.LogInformation("HTTP {RequestMethod} {RequestPath} started",
-                    context.Request.Method,
-                    context.Request.Path);
+                // Uncomment below to also log request start
+                // _logger.LogInformation("HTTP {RequestMethod} {RequestPath} started",
+                //     context.Request.Method,
+                //     context.Request.Path);
 
                 await _next(context);
 
@@ -42,17 +43,17 @@ public class RequestLoggingMiddleware
                 var statusCode = context.Response.StatusCode;
                 var message = $"HTTP {context.Request.Method} {context.Request.Path} completed in {sw.ElapsedMilliseconds}ms with status code {statusCode}";
 
-                if (statusCode >= 500)
+                switch (statusCode)
                 {
-                    _logger.LogError(message);
-                }
-                else if (statusCode >= 400)
-                {
-                    _logger.LogWarning(message);
-                }
-                else
-                {
-                    _logger.LogInformation(message);
+                    case >= 500:
+                        _logger.LogError(message);
+                        break;
+                    case >= 400:
+                        _logger.LogWarning(message);
+                        break;
+                    default:
+                        _logger.LogInformation(message);
+                        break;
                 }
             }
         }
