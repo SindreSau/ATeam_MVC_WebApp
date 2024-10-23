@@ -28,6 +28,7 @@
 
     <ItemGroup>
         <Folder Include="Controllers\"/>
+        <Folder Include="logs\" />
         <Folder Include="Views\Admin\"/>
     </ItemGroup>
 
@@ -114,6 +115,7 @@
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\LICENSE" />
       <_ContentIncludedByDefault Remove="Views\FoodProducts\ListFoodProducts.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
     </ItemGroup>
 
 </Project>
