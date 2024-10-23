@@ -41,7 +41,7 @@ namespace ATeam_MVC_WebApp.Models
 		public int FoodCategoryId { get; set; }  // Match the primary key name
 
 		[ForeignKey("FoodCategoryId")]
-		public virtual FoodCategory? Category { get; set; }
+		public virtual FoodCategory? FoodCategory { get; set; }
 
 		// Foreign key for User
 		[Required]

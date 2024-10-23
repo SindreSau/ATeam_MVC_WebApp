@@ -7,9 +7,9 @@ namespace ATeam_MVC_WebApp.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
+
     }
 
     // Add new DbSet for each new model
@@ -23,7 +23,7 @@ public class ApplicationDbContext : IdentityDbContext
 
         // Set up on delete behavior for foreign keys
         builder.Entity<FoodProduct>()
-            .HasOne(p => p.Category)
+            .HasOne(p => p.FoodCategory)
             .WithMany(c => c.FoodProducts)
             .OnDelete(DeleteBehavior.Restrict);
 

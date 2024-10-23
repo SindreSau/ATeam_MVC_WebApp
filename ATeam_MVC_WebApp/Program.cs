@@ -11,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+//oskar
+builder.Services.AddScoped<IFoodProductRepository, FoodProductRepository>();
+builder.Services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
 
 // Configure the database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

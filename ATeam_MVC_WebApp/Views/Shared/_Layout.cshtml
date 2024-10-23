@@ -13,7 +13,7 @@
 
     <link rel="icon" type="image/svg" href="~/favicon.svg"/>
 
-    <!-- Add transition styles -->
+    <!-- Add global styles -->
     <style>
         :root {
             transition: color-scheme .3s ease-in-out,
@@ -29,6 +29,25 @@
 
         .theme-icon-transition:hover {
             transform: rotate(25deg);
+        }
+
+        button, a.btn, input[type="submit"], input[type="button"] {
+            transition: outline 0.1s ease-in-out; /* Smooth transition for the outline */
+        }
+
+        button:focus, a.btn:focus, input[type="submit"]:focus, input[type="button"]:focus {
+            outline: 2px solid #007bff; /* Add outline on focus */
+            outline-offset: 2px;
+        }
+
+        #theme-toggle:focus {
+            outline: 2px solid #007bff; /* Add focus outline for the theme toggle button */
+            outline-offset: 2px;
+        }
+
+        .btn-primary:focus {
+            outline: 2px solid #007bff; /* Ensure the Create Product button has focus outline */
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -62,7 +81,7 @@
 
                 <!-- Theme Toggle Button -->
                 <div class="nav-item me-3">
-                    <button class="btn btn-link px-2" id="theme-toggle">
+                    <button class="btn px-2" id="theme-toggle">
                         <i class="fas fa-sun theme-icon-transition" id="theme-icon"></i>
                     </button>
                 </div>

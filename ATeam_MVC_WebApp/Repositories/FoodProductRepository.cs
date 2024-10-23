@@ -71,7 +71,7 @@ namespace ATeam_MVC_WebApp.Repositories
         {
             // Create a queryable collection of food products
             var query = _context.FoodProducts
-                .Include(fp => fp.Category)
+                .Include(fp => fp.FoodCategory)
                 .Include(fp => fp.CreatedBy)
                 .Where(fp => fp.CreatedById == vendorId) // Filter by vendor ID
                 .AsQueryable();
@@ -130,7 +130,7 @@ namespace ATeam_MVC_WebApp.Repositories
         }
 
         // Asynchronously retrieves a specific food product by its ID
-        public async Task<FoodProduct> GetFoodProductAsync(int id)
+        public async Task<FoodProduct> GetFoodProductAsync(int id) 
         {
             // Find and return the food product by ID
             var foodProduct = await _context.FoodProducts.FindAsync(id);
@@ -141,7 +141,8 @@ namespace ATeam_MVC_WebApp.Repositories
         public async Task<FoodProduct> AddFoodProductAsync(FoodProduct foodProduct)
         {
             // Add the new food product to the context
-            _context.FoodProducts.Add(foodProduct);
+            //_context.FoodProducts.Add(foodProduct);
+            _context.Add(foodProduct);
             // Save changes to the database
             await _context.SaveChangesAsync();
             return foodProduct; // Return the added product
@@ -179,6 +180,11 @@ namespace ATeam_MVC_WebApp.Repositories
             // Save changes to the database
             await _context.SaveChangesAsync();
             return true; // Return true indicating successful deletion
+        }
+        //oskar, gjorde dette får å få til view
+        public async Task<IEnumerable<FoodProduct>> GetAll()
+        {
+            return await _context.FoodProducts.ToListAsync();
         }
     }
 }
