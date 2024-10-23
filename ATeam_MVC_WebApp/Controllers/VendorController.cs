@@ -212,7 +212,7 @@ public class VendorController : Controller
     // ======== DELETE ========
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteProduct(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         var userId = _userManager.GetUserId(User);
         var product = await _foodProductRepository.GetFoodProductAsync(id);
