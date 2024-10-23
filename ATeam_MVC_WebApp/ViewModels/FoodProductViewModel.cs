@@ -42,45 +42,43 @@ namespace ATeam_MVC_WebApp.ViewModels
     // View Model for creating a new food product
     public class CreateFoodProductViewModel
     {
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "Product name is required")]
+        [StringLength(100, ErrorMessage = "Product name cannot exceed 100 characters")]
         [Display(Name = "Product Name")]
         public string ProductName { get; set; } = string.Empty;
 
-        [Required]
-        [Range(0, double.MaxValue)]
+        [Required(ErrorMessage = "Energy value is required")]
+        [Range(0, 1000, ErrorMessage = "Energy must be between 0 and 1000 kcal")]
         [Display(Name = "Energy (kcal)")]
         public decimal EnergyKcal { get; set; }
 
-        [Required]
-        [Range(0, double.MaxValue)]
+        [Required(ErrorMessage = "Fat content is required")]
+        [Range(0, 100, ErrorMessage = "Fat must be between 0 and 100g")]
+        [Display(Name = "Fat (g)")]
         public decimal Fat { get; set; }
 
-        [Required]
-        [Range(0, double.MaxValue)]
+        [Required(ErrorMessage = "Carbohydrates content is required")]
+        [Range(0, 100, ErrorMessage = "Carbohydrates must be between 0 and 100g")]
+        [Display(Name = "Carbohydrates (g)")]
         public decimal Carbohydrates { get; set; }
 
-        [Required]
-        [Range(0, double.MaxValue)]
+        [Required(ErrorMessage = "Protein content is required")]
+        [Range(0, 100, ErrorMessage = "Protein must be between 0 and 100g")]
+        [Display(Name = "Protein (g)")]
         public decimal Protein { get; set; }
 
-        [Required]
-        [Range(0, double.MaxValue)]
+        [Required(ErrorMessage = "Fiber content is required")]
+        [Range(0, 100, ErrorMessage = "Fiber must be between 0 and 100g")]
+        [Display(Name = "Fiber (g)")]
         public decimal Fiber { get; set; }
 
-        [Required]
-        [Range(0, double.MaxValue)]
+        [Required(ErrorMessage = "Salt content is required")]
+        [Range(0, 100, ErrorMessage = "Salt must be between 0 and 100g")]
+        [Display(Name = "Salt (g)")]
         public decimal Salt { get; set; }
 
-        [Display(Name = "Nøkkelhull Qualified")]
-        public bool NokkelhullQualified { get; set; }
-
-        [Required]
+        [Required(ErrorMessage = "Please select a category")]
         [Display(Name = "Category")]
-        public string CategoryName { get; set; } = string.Empty;
-
-        [Required]
-        [Display(Name = "CategoryId")]
         public int FoodCategoryId { get; set; }
     }
 
