@@ -1,109 +1,109 @@
 @model ATeam_MVC_WebApp.ViewModels.CreateFoodProductViewModel
 
 @{
-ViewData["Title"] = "Create Food Product";
+    ViewData["Title"] = "Create Food Product";
 }
 
 <div class="row justify-content-center">
-  <div class="col-md-8">
-    <div class="card shadow-sm">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Create New Food Product</h5>
-        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
-          <i class="fas fa-arrow-left"></i> Back to List
-        </a>
-      </div>
-      <div class="card-body">
-        <form asp-action="Create" method="post">
-          <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Create New Food Product</h5>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-          <div class="mb-3">
-            <label asp-for="ProductName" class="form-label"></label>
-            <div class="input-group">
+                    <div class="mb-3">
+                        <label asp-for="ProductName" class="form-label"></label>
+                        <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fas fa-utensils"></i>
                             </span>
-              <input asp-for="ProductName" class="form-control"/>
-            </div>
-            <span asp-validation-for="ProductName" class="text-danger small"></span>
-          </div>
+                            <input asp-for="ProductName" class="form-control"/>
+                        </div>
+                        <span asp-validation-for="ProductName" class="text-danger small"></span>
+                    </div>
 
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label asp-for="EnergyKcal" class="form-label"></label>
-              <div class="input-group">
-                <input asp-for="EnergyKcal" class="form-control" type="number" step="0.1"/>
-                <span class="input-group-text">kcal</span>
-              </div>
-              <span asp-validation-for="EnergyKcal" class="text-danger small"></span>
-            </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="EnergyKcal" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="EnergyKcal" class="form-control" type="number" step="0.1"/>
+                                <span class="input-group-text">kcal</span>
+                            </div>
+                            <span asp-validation-for="EnergyKcal" class="text-danger small"></span>
+                        </div>
 
-            <div class="col-md-6">
-              <label asp-for="Fat" class="form-label"></label>
-              <div class="input-group">
-                <input asp-for="Fat" class="form-control" type="number" step="0.1"/>
-                <span class="input-group-text">g</span>
-              </div>
-              <span asp-validation-for="Fat" class="text-danger small"></span>
-            </div>
+                        <div class="col-md-6">
+                            <label asp-for="Fat" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Fat" class="form-control" type="number" step="0.1"/>
+                                <span class="input-group-text">g</span>
+                            </div>
+                            <span asp-validation-for="Fat" class="text-danger small"></span>
+                        </div>
 
-            <div class="col-md-6">
-              <label asp-for="Carbohydrates" class="form-label"></label>
-              <div class="input-group">
-                <input asp-for="Carbohydrates" class="form-control" type="number" step="0.1"/>
-                <span class="input-group-text">g</span>
-              </div>
-              <span asp-validation-for="Carbohydrates" class="text-danger small"></span>
-            </div>
+                        <div class="col-md-6">
+                            <label asp-for="Carbohydrates" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Carbohydrates" class="form-control" type="number" step="0.1"/>
+                                <span class="input-group-text">g</span>
+                            </div>
+                            <span asp-validation-for="Carbohydrates" class="text-danger small"></span>
+                        </div>
 
-            <div class="col-md-6">
-              <label asp-for="Protein" class="form-label"></label>
-              <div class="input-group">
-                <input asp-for="Protein" class="form-control" type="number" step="0.1"/>
-                <span class="input-group-text">g</span>
-              </div>
-              <span asp-validation-for="Protein" class="text-danger small"></span>
-            </div>
+                        <div class="col-md-6">
+                            <label asp-for="Protein" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Protein" class="form-control" type="number" step="0.1"/>
+                                <span class="input-group-text">g</span>
+                            </div>
+                            <span asp-validation-for="Protein" class="text-danger small"></span>
+                        </div>
 
-            <div class="col-md-6">
-              <label asp-for="Fiber" class="form-label"></label>
-              <div class="input-group">
-                <input asp-for="Fiber" class="form-control" type="number" step="0.1"/>
-                <span class="input-group-text">g</span>
-              </div>
-              <span asp-validation-for="Fiber" class="text-danger small"></span>
-            </div>
+                        <div class="col-md-6">
+                            <label asp-for="Fiber" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Fiber" class="form-control" type="number" step="0.1"/>
+                                <span class="input-group-text">g</span>
+                            </div>
+                            <span asp-validation-for="Fiber" class="text-danger small"></span>
+                        </div>
 
-            <div class="col-md-6">
-              <label asp-for="Salt" class="form-label"></label>
-              <div class="input-group">
-                <input asp-for="Salt" class="form-control" type="number" step="0.1"/>
-                <span class="input-group-text">g</span>
-              </div>
-              <span asp-validation-for="Salt" class="text-danger small"></span>
-            </div>
+                        <div class="col-md-6">
+                            <label asp-for="Salt" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Salt" class="form-control" type="number" step="0.1"/>
+                                <span class="input-group-text">g</span>
+                            </div>
+                            <span asp-validation-for="Salt" class="text-danger small"></span>
+                        </div>
 
-            <div class="col-12">
-              <label asp-for="FoodCategoryId" class="form-label"></label>
-              <select asp-for="FoodCategoryId" class="form-select" asp-items="@((SelectList)ViewBag.Categories)">
-                <option value="">Select a Category</option>
-              </select>
-              <span asp-validation-for="FoodCategoryId" class="text-danger small"></span>
-            </div>
-          </div>
+                        <div class="col-12">
+                            <label asp-for="FoodCategoryId" class="form-label"></label>
+                            <select asp-for="FoodCategoryId" class="form-select" asp-items="@((SelectList)ViewBag.Categories)">
+                                <option value="">Select a Category</option>
+                            </select>
+                            <span asp-validation-for="FoodCategoryId" class="text-danger small"></span>
+                        </div>
+                    </div>
 
-          <div class="mt-4 d-flex justify-content-end gap-2">
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-save me-1"></i> Create Product
-            </button>
-          </div>
-        </form>
-      </div>
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Create Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 @section Scripts {
-  <partial name="_ValidationScriptsPartial"/>
+    <partial name="_ValidationScriptsPartial"/>
 }
