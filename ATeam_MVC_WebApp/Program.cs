@@ -1,80 +1,47 @@
-using ATeam_MVC_WebApp.Data;
-using ATeam_MVC_WebApp.Interfaces;
-using ATeam_MVC_WebApp.Repositories;
+using ATeam_MVC_WebApp.Configuration;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using ATeam_MVC_WebApp.Data;
+using ATeam_MVC_WebApp.Middleware;
+using Serilog;
+using Serilog.Events;
 
-// ====================================== //
-// === Set up the application builder === //
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    // Console output - keep multi-line for development readability
+    .WriteTo.Console(outputTemplate:
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}Properties: {Properties:j}{NewLine}{Exception}")
+    // File output - single line, concise format
+    .WriteTo.File(
+        outputTemplate:
+        "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj} | Method={RequestMethod} Path={RequestPath} Status={StatusCode} Elapsed={ElapsedMilliseconds}ms User={UserId} Client={ClientIP} Query={QueryString}{NewLine}",
+        path: "logs/log-.log",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30)
+    .CreateLogger();
+
+Log.Information("Starting web application");
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-//oskar
-builder.Services.AddScoped<IFoodProductRepository, FoodProductRepository>();
-builder.Services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
+// Remove default logging providers and add Serilog
+builder.Host.UseSerilog();
 
-// Configure the database
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add services to the container
+builder.Services
+    .AddControllersWithViews()
+    .Services.AddMvc()
+    .AddRazorPagesOptions(options => { });
 
-// Configure Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = false;
-    options.SignIn.RequireConfirmedEmail = false;
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = false;
-})
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+// Configure services using extension methods from the Configuration folder
+builder.Services
+    .AddDatabaseServices(builder.Configuration)
+    .AddIdentityServices()
+    .AddSessionServices();
 
-builder.Services.AddRazorPages();
-
-builder.Services.AddSession();
-
-// Configure application cookie
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Identity/Account/Login";
-    options.LogoutPath = "/Identity/Account/Logout";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-
-    // Cookie settings
-    options.ExpireTimeSpan = TimeSpan.FromDays(30); // The cookie will expire after X days
-    options.Cookie.HttpOnly = true; // Prevents JavaScript from accessing the cookie
-    options.SlidingExpiration = false; // Automatically refresh the cookie expiration time if the user is active
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensures the cookie is sent only over HTTPS
-
-    // Max age
-    options.Cookie.MaxAge = TimeSpan.FromDays(30); // The cookie will expire after X minutes
-
-    // If the user is not authenticated, redirect to the login page
-    options.Events.OnRedirectToLogin = context =>
-    {
-        context.Response.Redirect("/Identity/Account/Login");
-        return Task.CompletedTask;
-    };
-});
-
-// Configure session
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromDays(30); // The user will be logged out after X days of inactivity
-    options.Cookie.HttpOnly = true; // Prevents JavaScript from accessing the cookie
-    options.Cookie.IsEssential = true; // The session cookie is essential
-});
-
-// Add the repository services
-builder.Services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
-builder.Services.AddScoped<IFoodProductRepository, FoodProductRepository>();
-
-// ===================================== //
-// === Add services to the container === //
 var app = builder.Build();
 
 // Seed the database
@@ -87,36 +54,47 @@ using (var scope = app.Services.CreateScope())
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var context = services.GetRequiredService<ApplicationDbContext>();
 
+        Log.Information("Seeding database...");
+
         await DbSeeder.SeedData(services, userManager, roleManager);
 
-        // seed test data if in development
         if (app.Environment.IsDevelopment())
         {
+            Log.Information("Development environment detected, seeding test data...");
             await DbSeeder.SeedTestVendorWithTestProducts(userManager, context);
         }
+
+        Log.Information("Database seeding completed successfully");
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        Log.Error(ex, "An error occurred while seeding the database");
+        throw; // Re-throw after logging
     }
 }
 
-// Configure the HTTP request pipeline.
+// Configure the middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    Log.Information("Running in production mode");
+}
+else
+{
+    Log.Information("Running in development mode");
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseRequestLogging();
 
 app.MapControllerRoute(
     name: "default",
@@ -124,4 +102,4 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
-app.Run();
+await app.RunAsync();
