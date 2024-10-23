@@ -294,15 +294,15 @@ namespace ATeam_MVC_WebApp.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ATeam_MVC_WebApp.Models.FoodCategory", "Category")
+                    b.HasOne("ATeam_MVC_WebApp.Models.FoodCategory", "FoodCategory")
                         .WithMany("FoodProducts")
                         .HasForeignKey("FoodCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Category");
-
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("FoodCategory");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,11 +1,7 @@
 @model ATeam_MVC_WebApp.ViewModels.CreateFoodProductViewModel
 
 
-@{
-
-}
-
-<form asp-action="CreateProduct" method="post">
+<form method="post" asp-action="CreateProduct" enctype="multipart/form-data">
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Product name</label>
     <div class="col-sm-10">
@@ -13,7 +9,13 @@
       <span asp-validation-for="ProductName" class="text-danger"></span>
     </div>
   </div>
-
+  <div class="row mb-3">
+    <label class="col-sm-2 col-form-label">Fat</label>
+    <div class="col-sm-10">
+      <input asp-for="EnergyKcal" class="form-control" step="0.01" id="inputFat">
+      <span asp-validation-for="EnergyKcal" class="text-danger"></span>
+    </div>
+  </div>
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Fat</label>
     <div class="col-sm-10">
@@ -21,7 +23,6 @@
       <span asp-validation-for="Fat" class="text-danger"></span>
     </div>
   </div>
-
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Carbohydrates</label>
     <div class="col-sm-10">
@@ -29,7 +30,6 @@
       <span asp-validation-for="Carbohydrates" class="text-danger"></span>
     </div>
   </div>
-
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Protein</label>
     <div class="col-sm-10">
@@ -37,7 +37,6 @@
       <span asp-validation-for="Protein" class="text-danger"></span>
     </div>
   </div>
-
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Fiber</label>
     <div class="col-sm-10">
@@ -45,7 +44,6 @@
       <span asp-validation-for="Fiber" class="text-danger"></span>
     </div>
   </div>
-
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Salt</label>
     <div class="col-sm-10">
@@ -53,21 +51,21 @@
       <span asp-validation-for="Salt" class="text-danger"></span>
     </div>
   </div>
-
-  <div class="row mb-3">
-    <label class="col-sm-2 col-form-label">Food Category</label>
-    <div class="col-sm-10">
-      <select asp-for="CategoryId" class="form-select">
-        <option value="">-- Select Category --</option>
-        @foreach (var category in ViewBag.Categories as IEnumerable<ATeam_MVC_WebApp.Models.FoodCategory>)
-        {
-          <option value="@category.FoodCategoryId">@category.CategoryName</option>
-        }
-      </select>
-      <span asp-validation-for="CategoryId" class="text-danger"></span>
-    </div>
+  <div class="form-group">
+    <label asp-for="FoodCategoryId" class="control-label"></label>
+    @Html.DropDownListFor(model => model.FoodCategoryId, (SelectList)ViewBag.Categories, "Select a Category", new { @class = "form-control" })
+    @Html.ValidationMessageFor(model => model.FoodCategoryId, "", new { @class = "text-danger" })
   </div>
-
+  <div class="form-group">
+    <label asp-for="NokkelhullQualified" class="control-label"></label>
+    @Html.DropDownListFor(model => model.NokkelhullQualified, new SelectList(new[]
+    {
+        new { Value = true, Text = "True" },
+        new { Value = false, Text = "False" }
+    }, "Value", "Text"), "Velg et alternativ", new { @class = "form-control" })
+    @Html.ValidationMessageFor(model => model.NokkelhullQualified, "", new { @class = "text-danger" })
+  </div>
 
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+

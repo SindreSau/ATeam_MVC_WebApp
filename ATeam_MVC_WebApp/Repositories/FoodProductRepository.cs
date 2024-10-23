@@ -78,7 +78,8 @@ namespace ATeam_MVC_WebApp.Repositories
         public async Task<FoodProduct> AddFoodProductAsync(FoodProduct foodProduct)
         {
             // Add the new food product to the context
-            _context.FoodProducts.Add(foodProduct);
+            //_context.FoodProducts.Add(foodProduct);
+            _context.Add(foodProduct);
             // Save changes to the database
             await _context.SaveChangesAsync();
             return foodProduct; // Return the added product

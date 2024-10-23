@@ -5,6 +5,7 @@ using ATeam_MVC_WebApp.Models;
 using ATeam_MVC_WebApp.ViewModels;
 using System.Security.Claims;
 using Microsoft.CodeAnalysis.Differencing;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ATeam_MVC_WebApp.Controllers;
 
@@ -54,7 +55,7 @@ public class VendorController : Controller
       Fiber = fp.Fiber,
       Salt = fp.Salt,
       NokkelhullQualified = fp.NokkelhullQualified,
-      CategoryName = fp.Category?.CategoryName ?? "Unknown", // Null check
+      CategoryName = fp.FoodCategory?.CategoryName ?? "Unknown", // Null check
       CreatedByUsername = fp.CreatedBy?.UserName ?? "Unknown" // Null check 
     }).ToList();
 
@@ -68,7 +69,7 @@ public class VendorController : Controller
   {
     // Load categories for the dropdown
     var categories = await _foodCategoryRepository.GetAllCategoriesAsync();
-    ViewBag.Categories = categories;
+    ViewBag.Categories = new SelectList(categories, "FoodCategoryId", "CategoryName");
     return View(new CreateFoodProductViewModel());
   }
 
@@ -80,7 +81,7 @@ public class VendorController : Controller
     if (!ModelState.IsValid)
     {
       var categories = await _foodCategoryRepository.GetAllCategoriesAsync();
-      ViewBag.Categories = categories;
+      ViewBag.Categories = new SelectList(categories, "FoodCategory", "CategoryName");
       return View(model);
     }
 
@@ -102,7 +103,7 @@ public class VendorController : Controller
       Fiber = model.Fiber,
       Salt = model.Salt,
       NokkelhullQualified = model.NokkelhullQualified,
-      FoodCategoryId = model.CategoryId,
+      FoodCategoryId = model.FoodCategoryId,
       CreatedById = userId,
       CreatedAt = DateTime.UtcNow,
       UpdatedAt = DateTime.UtcNow
@@ -148,7 +149,7 @@ public class VendorController : Controller
       Fiber = product.Fiber,
       Salt = product.Salt,
       NokkelhullQualified = product.NokkelhullQualified,
-      CategoryId = product.FoodCategoryId,
+      FoodCategoryId = product.FoodCategoryId,
     };
 
     return View(viewModel);
@@ -188,7 +189,7 @@ public class VendorController : Controller
     existingProduct.Fiber = model.Fiber;
     existingProduct.Salt = model.Salt;
     existingProduct.NokkelhullQualified = model.NokkelhullQualified;
-    existingProduct.FoodCategoryId = model.CategoryId;
+    existingProduct.FoodCategoryId = model.FoodCategoryId;
     existingProduct.UpdatedAt = DateTime.UtcNow;
 
     await _foodProductRepository.UpdateFoodProductAsync(existingProduct);

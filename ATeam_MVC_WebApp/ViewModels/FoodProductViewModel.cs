@@ -70,7 +70,7 @@ namespace ATeam_MVC_WebApp.ViewModels
 
         [Required]
         [Display(Name = "CategoryId")]
-        public int CategoryId { get; set; }
+        public int FoodCategoryId { get; set; }
     }
 
     // View Model for Editing an Existing food product, inherits from Create

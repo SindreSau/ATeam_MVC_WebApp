@@ -45,7 +45,7 @@ public class AdminController : Controller
             Salt = fp.Salt,
             NokkelhullQualified = fp.NokkelhullQualified,
             CreatedByUsername = fp.CreatedBy?.UserName ?? "Unknown", // Added null check
-            CategoryName = fp.Category?.CategoryName ?? "Unknown" // Added null check
+            CategoryName = fp.FoodCategory?.CategoryName ?? "Unknown" // Added null check
         }).ToList();
 
         return View(foodProductViewModels);

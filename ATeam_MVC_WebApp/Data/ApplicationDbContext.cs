@@ -23,7 +23,7 @@ public class ApplicationDbContext : IdentityDbContext
 
         // Set up on delete behavior for foreign keys
         builder.Entity<FoodProduct>()
-            .HasOne(p => p.Category)
+            .HasOne(p => p.FoodCategory)
             .WithMany(c => c.FoodProducts)
             .OnDelete(DeleteBehavior.Restrict);
 
