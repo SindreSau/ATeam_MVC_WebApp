@@ -25,7 +25,7 @@ public class VendorController : Controller
 
   // ======== DISPLAY ALL PRODUCTS ======== 
   // Displays a paginated list of food products owned by the current vendor
-  public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string orderBy = "productname", bool? nokkelhull = null)
+  public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string orderBy = "productid", bool? nokkelhull = null)
   {
     // Get the current user's ID
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -40,6 +40,7 @@ public class VendorController : Controller
     {
       FoodProducts = products.Select(fp => new FoodProductViewModel
       {
+        ProductId = fp.FoodProductId,
         ProductName = fp.ProductName,
         EnergyKcal = fp.EnergyKcal,
         Fat = fp.Fat,
@@ -51,9 +52,12 @@ public class VendorController : Controller
         CategoryName = fp.Category?.CategoryName ?? "Unknown",
         CreatedByUsername = fp.CreatedBy?.UserName ?? "Unknown"
       }).ToList(),
-      PageNumber = pageNumber,
-      PageSize = pageSize,
-      TotalCount = await _foodProductRepository.GetFoodProductsByVendorCountAsync(userId),
+      Pagination = new PaginationViewModel
+      {
+        CurrentPage = pageNumber,
+        PageSize = pageSize,
+        TotalCount = await _foodProductRepository.GetFoodProductsByVendorCountAsync(userId),
+      },
       OrderBy = orderBy,
       Nokkelhull = nokkelhull
     };
