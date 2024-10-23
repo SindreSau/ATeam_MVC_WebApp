@@ -148,7 +148,7 @@ public static class DbSeeder
                     Fat = 11,
                     Fiber = 14,
                     Salt = 6,
-                    NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(40, 11, 17, 12, 14, 6),
+                    NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(40, 12, 17, 11, 14, 6),
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     CreatedById = vendorId,
@@ -163,12 +163,28 @@ public static class DbSeeder
                     Fat = 5,
                     Fiber = 3,
                     Salt = 1,
-                    NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(32, 5, 22, 8, 3, 1),
+                    NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(32, 8, 22, 5, 3, 1),
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     CreatedById = vendorId,
                     FoodCategoryId = 3
-                }
+                },
+                // This should be nokkelhull qualified
+                new FoodProduct
+                {
+                    ProductName = "Knekkebrød",
+                    EnergyKcal = 30,
+                    Protein = 10,
+                    Carbohydrates = 32,
+                    Fat = 2,
+                    Fiber = 7,
+                    Salt = 1,
+                    NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(30, 10, 32, 2, 7, 1),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    CreatedById = vendorId,
+                    FoodCategoryId = 3
+                },
             };
 
             await context.FoodProducts.AddRangeAsync(products);

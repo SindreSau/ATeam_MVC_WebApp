@@ -1,7 +1,5 @@
-
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+
 
 namespace ATeam_MVC_WebApp.ViewModels
 {
@@ -10,11 +8,7 @@ namespace ATeam_MVC_WebApp.ViewModels
     {
         public List<FoodProductViewModel> FoodProducts { get; set; } = new List<FoodProductViewModel>();
 
-        public int PageNumber { get; set; }
-
-        public int PageSize { get; set; }
-
-        public int TotalCount { get; set; }
+        public PaginationViewModel Pagination { get; set; } = new();
 
         public string OrderBy { get; set; } = string.Empty;
 
@@ -23,6 +17,7 @@ namespace ATeam_MVC_WebApp.ViewModels
 
     public class FoodProductViewModel
     {
+        public int ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
 
         public decimal EnergyKcal { get; set; }
