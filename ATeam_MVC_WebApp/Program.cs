@@ -2,6 +2,7 @@ using ATeam_MVC_WebApp.Configuration;
 using Microsoft.AspNetCore.Identity;
 using ATeam_MVC_WebApp.Data;
 using ATeam_MVC_WebApp.Middleware;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Serilog;
 using Serilog.Events;
 
@@ -26,6 +27,9 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("Starting web application");
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Set the urls for the web application
+builder.WebHost.UseUrls("http://localhost:5000", "https://localhost:5001");
 
 // Remove default logging providers and add Serilog
 builder.Host.UseSerilog();
@@ -102,4 +106,7 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
+Log.Information("Web application started successfully");
+Log.Information("Web application listening on http://localhost:5000 and https://localhost:5001");
+await app.RunAsync();
 await app.RunAsync();
