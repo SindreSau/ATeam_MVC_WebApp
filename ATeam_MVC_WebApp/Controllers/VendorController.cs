@@ -130,7 +130,7 @@ public class VendorController : Controller
 
     // ======== EDIT ========
     // Displays the form for editing an existing food product
-    public async Task<IActionResult> EditProduct(int id)
+    public async Task<IActionResult> Edit(int id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var product = await _foodProductRepository.GetFoodProductAsync(id);
@@ -148,7 +148,7 @@ public class VendorController : Controller
 
         // Load categories in drop down
         var categories = await _foodCategoryRepository.GetAllCategoriesAsync();
-        ViewBag.Categories = categories;
+        ViewBag.Categories = new SelectList(categories, "FoodCategoryId", "CategoryName", product.FoodCategoryId);
 
         // Convert product to view model for editing
         var viewModel = new EditFoodProductViewModel
@@ -169,7 +169,7 @@ public class VendorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditProduct(int id, EditFoodProductViewModel model)
+    public async Task<IActionResult> Edit(int id, EditFoodProductViewModel model)
     {
         if (id != model.ProductId)
         {
@@ -179,7 +179,7 @@ public class VendorController : Controller
         if (!ModelState.IsValid)
         {
             var categories = await _foodCategoryRepository.GetAllCategoriesAsync();
-            ViewBag.Categories = categories;
+            ViewBag.Categories = new SelectList(categories, "FoodCategoryId", "CategoryName", model.FoodCategoryId);
             return View(model);
         }
 
