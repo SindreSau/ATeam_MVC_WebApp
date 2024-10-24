@@ -17,11 +17,11 @@
         // Update icon
         const icon = document.getElementById('theme-icon')
         if (theme === 'dark') {
-            icon.classList.remove('fa-sun')
-            icon.classList.add('fa-moon')
-        } else {
             icon.classList.remove('fa-moon')
             icon.classList.add('fa-sun')
+        } else {
+            icon.classList.remove('fa-sun')
+            icon.classList.add('fa-moon')
         }
     }
 
@@ -29,6 +29,10 @@
     const currentTheme = getPreferredTheme();
     const icon = document.getElementById('theme-icon')
     if (currentTheme === 'dark') {
+        icon.classList.remove('fa-moon')
+        icon.classList.add('fa-sun')
+    }
+    else {
         icon.classList.remove('fa-sun')
         icon.classList.add('fa-moon')
     }

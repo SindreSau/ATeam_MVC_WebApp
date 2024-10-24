@@ -20,6 +20,9 @@
     document.addEventListener('DOMContentLoaded', () => {
         const icon = document.getElementById('theme-icon');
         if (theme === 'dark') {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        } else {
             icon.classList.remove('fa-sun');
             icon.classList.add('fa-moon');
         }
