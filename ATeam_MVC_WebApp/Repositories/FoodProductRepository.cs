@@ -1,6 +1,7 @@
 using ATeam_MVC_WebApp.Data;
 using ATeam_MVC_WebApp.Interfaces;
 using ATeam_MVC_WebApp.Models;
+using ATeam_MVC_WebApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ATeam_MVC_WebApp.Repositories
@@ -140,12 +141,24 @@ namespace ATeam_MVC_WebApp.Repositories
         // Asynchronously adds a new food product to the database
         public async Task<FoodProduct> AddFoodProductAsync(FoodProduct foodProduct)
         {
-            // Add the new food product to the context
-            //_context.FoodProducts.Add(foodProduct);
+            if (foodProduct == null)
+            {
+                throw new ArgumentNullException(nameof(foodProduct));
+            }
+
+            // Calculate Nokkelhull qualification before saving
+            foodProduct.NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified(
+                (float)foodProduct.EnergyKcal,
+                (float)foodProduct.Protein,
+                (float)foodProduct.Carbohydrates,
+                (float)foodProduct.Fat,
+                (float)foodProduct.Fiber,
+                (float)foodProduct.Salt
+            );
+
             _context.Add(foodProduct);
-            // Save changes to the database
             await _context.SaveChangesAsync();
-            return foodProduct; // Return the added product
+            return foodProduct;
         }
 
         // Asynchronously updates an existing food product in the database
