@@ -16,16 +16,17 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterModel> logger)
+            ILogger<RegisterModel> logger, InputModel input)
         {
             _userManager = userManager;
             _userStore = userStore;
             _signInManager = signInManager;
             _logger = logger;
+            Input = input;
         }
 
         [BindProperty]
-        public InputModel? Input { get; set; }
+        public InputModel Input { get; set; }
         public string? ReturnUrl { get; set; }
 
         public class InputModel
@@ -33,18 +34,18 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
-            public string Email { get; set; }
+            public required string Email { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
-            public string Password { get; set; }
+            public required string Password { get; set; }
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
+            public required string ConfirmPassword { get; set; }
         }
 
         public void OnGet(string? returnUrl = null)
@@ -52,13 +53,14 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            
-            if (ModelState.IsValid)
+
+            if (!ModelState.IsValid) return Page();
+
+            var user = CreateUser();
             {
-                var user = CreateUser();
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -71,7 +73,7 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }
-                
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
