@@ -18,21 +18,41 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      # Add caching for better performance
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore --warnaserror # Treats warnings as errors for main branch
+        run: dotnet build --no-restore --warnaserror --configuration Release
 
+      # Run tests with detailed output and fail if any test fails
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test --no-build --configuration Release --logger "console;verbosity=detailed" --blame-crash --blame-hang-timeout 10min
 
+      # Separate coverage step with filter to exclude test projects
       - name: Check Code Coverage
         run: |
           dotnet tool install --global coverlet.console
-          dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByFile="**/*.Test.cs" /p:Exclude="[*.Tests]*"
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      # Add summary of test results
+      - name: Test Summary
+        run: |
+          echo "### Test Results 📊" >> $GITHUB_STEP_SUMMARY
+          dotnet test --no-build --configuration Release --logger "console;verbosity=normal" | tee /tmp/test-results.txt
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat /tmp/test-results.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
