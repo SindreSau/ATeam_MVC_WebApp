@@ -27,14 +27,15 @@ public class AdminController : Controller
         var products = await _foodProductRepository.GetFoodProductsAsync(pageNumber, pageSize, orderBy, nokkelhull);
 
         // Store the products in a list to avoid multiple enumeration
-        var productsList = products.ToList();
+        IEnumerable<FoodProduct> foodProducts = products.ToList(); // Added ToList() to avoid multiple enumeration
+        var productsList = foodProducts.ToList();
 
         if (!productsList.Any())
         {
             return NotFound("No food products found.");
         }
 
-        var foodProductViewModels = products.Select(fp => new FoodProductViewModel
+        var foodProductViewModels = foodProducts.Select(fp => new FoodProductViewModel
         {
             ProductName = fp.ProductName,
             EnergyKcal = fp.EnergyKcal,
@@ -65,6 +66,8 @@ public class AdminController : Controller
         {
             return View(model);
         }
+
+        if (model.CategoryName == null) return View(model); // Added null check
 
         var category = new FoodCategory
         {
