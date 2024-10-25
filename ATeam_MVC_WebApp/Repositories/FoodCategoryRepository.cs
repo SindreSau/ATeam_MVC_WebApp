@@ -57,7 +57,6 @@ namespace ATeam_MVC_WebApp.Repositories
       // Saves changes to database
       await _context.SaveChangesAsync();
       return existingCategory;
-
     }
 
     // Asynchronously deletes a food category by its ID
@@ -74,6 +73,10 @@ namespace ATeam_MVC_WebApp.Repositories
       await _context.SaveChangesAsync();
       return true;
     }
+    public async Task<IEnumerable<FoodCategory>> GetAll()
+        {
+            return await _context.FoodCategories.ToListAsync();
+        }
 
   }
 }
