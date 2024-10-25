@@ -119,10 +119,6 @@ public class VendorController : Controller
             CreatedAt = DateTime.UtcNow
         };
 
-        // Check if the product is Nøkkelhull qualified
-        product.NokkelhullQualified = NutritionCalculatorService.IsNokkelhullQualified((float)product.EnergyKcal,
-            (float)product.Protein, (float)product.Carbohydrates, (float)product.Fat, (float)product.Fiber, (float)product.Salt);
-
         await _foodProductRepository.AddFoodProductAsync(product);
         return RedirectToAction(nameof(Index));
     }

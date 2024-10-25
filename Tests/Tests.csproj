@@ -28,8 +28,4 @@
       <ProjectReference Include="..\ATeam_MVC_WebApp\ATeam_MVC_WebApp.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Repositories\" />
-    </ItemGroup>
-
 </Project>
