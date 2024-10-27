@@ -62,7 +62,7 @@ namespace ATeam_MVC_WebApp.Repositories
             query = query
                 .Skip((pageNumber - 1) * pageSize) // Skip the previous pages
                 .Take(pageSize); // Take the specified number of records for the current page
-            
+
             // Execute the query and return the list of food products
             return await query.ToListAsync();
         }
@@ -131,7 +131,7 @@ namespace ATeam_MVC_WebApp.Repositories
         }
 
         // Asynchronously retrieves a specific food product by its ID
-        public async Task<FoodProduct> GetFoodProductAsync(int id) 
+        public async Task<FoodProduct> GetFoodProductAsync(int id)
         {
             // Find and return the food product by ID
             var foodProduct = await _context.FoodProducts.FindAsync(id);
@@ -195,9 +195,9 @@ namespace ATeam_MVC_WebApp.Repositories
             return true; // Return true indicating successful deletion
         }
         //oskar, gjorde dette får å få til view
-        public async Task<IEnumerable<FoodProduct>> GetAll()
-        {
-            return await _context.FoodProducts.ToListAsync();
-        }
+        // public async Task<IEnumerable<FoodProduct>> GetAll()
+        // {
+        //     return await _context.FoodProducts.ToListAsync();
+        // }
     }
 }

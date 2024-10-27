@@ -1,18 +1,27 @@
 @model System.Collections.Generic.List<ATeam_MVC_WebApp.ViewModels.FoodProductViewModel>
-
 @{
-    Layout = null;
+    Layout = "_Layout";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-
-</div>
-</body>
-</html>
+<h2>All Food Products</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Created By</th>
+            <!-- Add other columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.ProductName</td>
+                <td>@product.CategoryName</td>
+                <td>@product.CreatedByUsername</td>
+                <!-- Add other columns as needed -->
+            </tr>
+        }
+    </tbody>
+</table>

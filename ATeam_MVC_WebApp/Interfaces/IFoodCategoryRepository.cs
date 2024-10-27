@@ -10,7 +10,7 @@ namespace ATeam_MVC_WebApp.Interfaces
     Task<FoodCategory> UpdateCategoryAsync(FoodCategory category); // UPDATE
     Task<bool> DeleteCategoryAsync(int categoryId); // DELETE
 
-     Task<IEnumerable<FoodCategory>> GetAll(); //oskar
+    //  Task<IEnumerable<FoodCategory>> GetAll(); //oskar
 
   }
 }
