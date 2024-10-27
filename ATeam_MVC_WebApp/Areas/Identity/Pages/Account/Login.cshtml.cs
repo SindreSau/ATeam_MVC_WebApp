@@ -103,6 +103,11 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            // If user is admin, returnUrl is set to /Admin/Index
+            if (User.IsInRole("Admin"))
+            {
+                returnUrl = "/Admin";
+            }
             returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();

@@ -17,7 +17,7 @@ public class AdminController : Controller
         _foodCategoryRepository = foodCategoryRepository;
     }
 
-    public async Task<IActionResult> ViewFoodProducts(
+    public async Task<IActionResult> Index(
         int pageNumber = 1,
         int pageSize = 10,
         string orderBy = "productname",

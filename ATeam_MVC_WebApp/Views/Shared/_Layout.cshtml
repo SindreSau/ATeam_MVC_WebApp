@@ -25,9 +25,20 @@
 <header>
     <nav class="navbar navbar-expand-sm border-bottom py-2">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Vendor" asp-action="Index">
-                <img src="~/assets/nokkelhollet-logo.svg" alt="Nøkkelhollet" class="me-2" style="height: 40px; width: auto;"/>
-            </a>
+            @* If admin, redirect to "/admin/index", else go to "vendor/index" *@
+            @if (User.IsInRole("Admin"))
+            {
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Admin" asp-action="Index">
+                    <img src="~/assets/nokkelhollet-logo.svg" alt="Nøkkelhollet" class="me-2" style="height: 40px; width: auto;"/>
+                </a>
+            }
+            else
+            {
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Vendor" asp-action="Index">
+                    <img src="~/assets/nokkelhollet-logo.svg" alt="Nøkkelhollet" class="me-2" style="height: 40px; width: auto;"/>
+                </a>
+            }
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
