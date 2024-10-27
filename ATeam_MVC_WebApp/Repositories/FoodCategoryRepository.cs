@@ -73,10 +73,10 @@ namespace ATeam_MVC_WebApp.Repositories
       await _context.SaveChangesAsync();
       return true;
     }
-    public async Task<IEnumerable<FoodCategory>> GetAll()
-        {
-            return await _context.FoodCategories.ToListAsync();
-        }
+    // public async Task<IEnumerable<FoodCategory>> GetAll()
+    //     {
+    //         return await _context.FoodCategories.ToListAsync();
+    //     }
 
   }
 }
