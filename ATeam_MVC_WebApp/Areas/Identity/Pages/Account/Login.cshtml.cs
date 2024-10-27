@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
 {
@@ -103,11 +104,6 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            // If user is admin, returnUrl is set to /Admin/Index
-            if (User.IsInRole("Admin"))
-            {
-                returnUrl = "/Admin";
-            }
             returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -120,6 +116,18 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    // If user is admin, returnUrl is set to /Admin/Index
+                    if (User.IsInRole("Admin"))
+                    {
+                        _logger.LogInformation("User is admin, redirecting to /Admin/Index");
+                        returnUrl = "~/Admin";
+                    }
+                    else
+                    {
+                        _logger.LogInformation("User is not admin, redirecting to /");
+                        returnUrl = "~/";
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
