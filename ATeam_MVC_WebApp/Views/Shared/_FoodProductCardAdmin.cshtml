@@ -1,0 +1,18 @@
+@model ATeam_MVC_WebApp.ViewModels.FoodProductViewModel
+
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title">@Model.ProductName</h5>
+    <p class="card-text">
+      <strong>Energy (kcal):</strong> @Model.EnergyKcal<br />
+      <strong>Fat:</strong> @Model.Fat g<br />
+      <strong>Carbohydrates:</strong> @Model.Carbohydrates g<br />
+      <strong>Protein:</strong> @Model.Protein g<br />
+      <strong>Fiber:</strong> @Model.Fiber g<br />
+      <strong>Salt:</strong> @Model.Salt g<br />
+      <strong>Nokkelhull Qualified:</strong> @(Model.NokkelhullQualified ? "Yes" : "No")<br />
+      <strong>Category:</strong> @Model.CategoryName<br />
+      <strong>Created By:</strong> @Model.CreatedByUsername
+    </p>
+  </div>
+</div>
