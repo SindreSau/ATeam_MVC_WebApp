@@ -49,7 +49,20 @@ public class AdminController : Controller
             CategoryName = fp.FoodCategory?.CategoryName ?? "Unknown" // Added null check
         }).ToList();
 
-        return View(foodProductViewModels);
+        var viewModel = new FoodProductListViewModel
+        {
+            FoodProducts = foodProductViewModels,
+            Pagination = new PaginationViewModel
+            {
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                TotalCount = productsList.Count // Use count of current list
+            },
+            OrderBy = orderBy,
+            Nokkelhull = nokkelhull
+        };
+
+        return View(viewModel);
     }
 
 

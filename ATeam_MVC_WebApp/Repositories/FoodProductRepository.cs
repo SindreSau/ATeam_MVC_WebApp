@@ -21,7 +21,10 @@ namespace ATeam_MVC_WebApp.Repositories
         public async Task<IEnumerable<FoodProduct>> GetFoodProductsAsync(int pageNumber, int pageSize, string orderBy, bool? nokkelhull)
         {
             // Create a queryable collection of food products
-            var query = _context.FoodProducts.AsQueryable();
+            var query = _context.FoodProducts
+            .Include(fp => fp.FoodCategory) // Include related FoodCategory
+            .Include(fp => fp.CreatedBy) // Include related CreatedBy
+            .AsQueryable();
 
             // Filter products based on whether they are Nokkelhull qualified
             if (nokkelhull != null)
