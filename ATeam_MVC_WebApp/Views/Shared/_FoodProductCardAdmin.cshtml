@@ -1,18 +1,44 @@
 @model ATeam_MVC_WebApp.ViewModels.FoodProductViewModel
 
-<div class="card mb-3">
-  <div class="card-body">
-    <h5 class="card-title">@Model.ProductName</h5>
-    <p class="card-text">
-      <strong>Energy (kcal):</strong> @Model.EnergyKcal<br />
-      <strong>Fat:</strong> @Model.Fat g<br />
-      <strong>Carbohydrates:</strong> @Model.Carbohydrates g<br />
-      <strong>Protein:</strong> @Model.Protein g<br />
-      <strong>Fiber:</strong> @Model.Fiber g<br />
-      <strong>Salt:</strong> @Model.Salt g<br />
-      <strong>Nokkelhull Qualified:</strong> @(Model.NokkelhullQualified ? "Yes" : "No")<br />
-      <strong>Category:</strong> @Model.CategoryName<br />
-      <strong>Created By:</strong> @Model.CreatedByUsername
+<div class="card mb-1">
+  <div class="card-body rounded-5 d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 class="card-title h4 mb-0">@Model.ProductName</h2>
+      @if (Model.NokkelhullQualified)
+      {
+        <span class="badge bg-success fs-6 py-1 px-2">Nøkkelhull</span>
+      }
+      else
+      {
+        <span class="badge bg-danger fs-6 py-1 px-2">Nøkkelhull</span>
+      }
+    </div>
+    <p class="card-text text-muted small mb-2">
+      Category: @Model.CategoryName
     </p>
+    <div class="mb-3">
+      <div class="col-auto">
+        <span class="badge bg-info">Energy: @Model.EnergyKcal.ToString("0") kcal</span>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-info">Protein: @Model.Protein g</span>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-info">Fat: @Model.Fat g</span>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-info">Carbs: @Model.Carbohydrates g</span>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-info">Fiber: @Model.Fiber g</span>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-info">Salt: @Model.Salt g</span>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-discovery">Created By: @Model.CreatedByUsername</span>
+      </div>
+    </div>
+
   </div>
 </div>
