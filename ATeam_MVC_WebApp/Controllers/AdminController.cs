@@ -11,12 +11,10 @@ namespace ATeam_MVC_WebApp.Controllers;
 public class AdminController : Controller
 {
     private readonly IFoodProductRepository _foodProductRepository;
-    private readonly IFoodCategoryRepository _foodCategoryRepository;
 
-    public AdminController(IFoodProductRepository foodProductRepository, IFoodCategoryRepository foodCategoryRepository)
+    public AdminController(IFoodProductRepository foodProductRepository)
     {
         _foodProductRepository = foodProductRepository;
-        _foodCategoryRepository = foodCategoryRepository;
     }
 
     public async Task<IActionResult> Index(
@@ -66,36 +64,5 @@ public class AdminController : Controller
         };
 
         return View(viewModel);
-    }
-
-
-    [HttpGet]
-    public IActionResult CreateCategory()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateCategory(FoodCategoryCreateViewModel model)
-    {
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
-
-        if (model.CategoryName == null) return View(model); // Added null check
-
-        var category = new FoodCategory
-        {
-            CategoryName = model.CategoryName
-        };
-
-        bool returnOk = await _foodCategoryRepository.AddCategoryAsync(category);
-        if (returnOk)
-        {
-            return RedirectToAction();
-        }
-
-        return View(model);
     }
 }

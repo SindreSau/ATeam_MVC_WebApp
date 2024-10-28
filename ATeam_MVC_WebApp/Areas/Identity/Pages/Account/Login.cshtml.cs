@@ -120,12 +120,15 @@ namespace ATeam_MVC_WebApp.Areas.Identity.Pages.Account
                     if (User.IsInRole("Admin"))
                     {
                         _logger.LogInformation("User is admin, redirecting to /Admin/Index");
-                        returnUrl = "~/Admin";
+                        returnUrl = "~/admin";
                     }
-                    else
+                    else if (User.IsInRole("Vendor"))
                     {
-                        _logger.LogInformation("User is not admin, redirecting to /");
-                        returnUrl = "~/";
+                        _logger.LogInformation("User is not admin, redirecting to /vendor");
+                        returnUrl = "~/vendor";
+                    } else
+                    {
+                        _logger.LogInformation("User is not admin or vendor, redirecting to /");
                     }
 
                     return LocalRedirect(returnUrl);
