@@ -104,6 +104,12 @@ public class VendorController : Controller
             return Unauthorized();
         }
 
+        // Check if the model is null
+        if (model == null)
+        {
+            return BadRequest("Model cannot be null");
+        }
+
         // Create a new food product
         var product = new FoodProduct
         {
@@ -220,6 +226,12 @@ public class VendorController : Controller
 
         // Verify the vendor owns this product
         if (product.CreatedById != userId)
+        {
+            return Unauthorized();
+        }
+
+        // Check if userId is null or empty
+        if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized();
         }
