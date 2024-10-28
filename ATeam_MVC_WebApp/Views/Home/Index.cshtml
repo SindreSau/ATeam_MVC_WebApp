@@ -11,7 +11,7 @@
     {
       <div class="mb-4">
         <p class="mb-2">You are signed in as an administrator.</p>
-        <a href="@Url.Action("Index", "Admin")"
+        <a asp-controller="Admin" asp-action="Index"
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Go to Admin Dashboard
         </a>
@@ -21,7 +21,7 @@
     {
       <div class="mb-4">
         <p class="mb-2">Welcome back, vendor!</p>
-        <a href="@Url.Action("Index", "Vendor")"
+        <a asp-controller="Vendor" asp-action="Index"
           class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
           Manage Your Products
         </a>
