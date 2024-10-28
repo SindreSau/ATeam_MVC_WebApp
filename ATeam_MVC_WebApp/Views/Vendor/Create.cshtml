@@ -5,13 +5,13 @@
 }
 
 <div class="row justify-content-center">
+    <a asp-controller="Vendor" asp-action="Index" class="link-info mb-4">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
     <div class="col-md-8">
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Create New Food Product</h5>
-                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
-                    <i class="fas fa-arrow-left"></i> Back to List
-                </a>
             </div>
             <div class="card-body">
                 <form asp-action="Create" method="post">

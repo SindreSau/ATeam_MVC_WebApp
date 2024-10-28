@@ -120,6 +120,7 @@ public class VendorController : Controller
         };
 
         await _foodProductRepository.AddFoodProductAsync(product);
+        TempData["Success"] = "Product added successfully";
         return RedirectToAction(nameof(Index));
     }
 
@@ -200,9 +201,8 @@ public class VendorController : Controller
         existingProduct.UpdatedAt = DateTime.UtcNow;
 
         await _foodProductRepository.UpdateFoodProductAsync(existingProduct);
-        return
-            RedirectToAction(
-                nameof(Index)); // Returns to MyProducts method, which sends Vendor back to seeing their products
+        TempData["Success"] = "Product updated successfully";
+        return RedirectToAction(nameof(Index));
     }
 
     // ======== DELETE ========
@@ -225,6 +225,7 @@ public class VendorController : Controller
         }
 
         await _foodProductRepository.DeleteFoodProductAsync(id);
+        TempData["Success"] = "Product deleted successfully";
         return RedirectToAction(nameof(Index));
     }
 }

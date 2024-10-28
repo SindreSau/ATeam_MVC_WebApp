@@ -109,4 +109,3 @@ app.MapRazorPages();
 Log.Information("Web application started successfully");
 Log.Information("Web application listening on http://localhost:5000 and https://localhost:5001");
 await app.RunAsync();
-await app.RunAsync();

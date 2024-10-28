@@ -22,112 +22,68 @@ public class CategoryController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        try
+        var categories = await _foodCategoryRepository.GetAllCategoriesAsync();
+        var viewModel = new FoodCategoryViewModel
         {
-            var categories = await _foodCategoryRepository.GetAllCategoriesAsync();
-            var viewModel = new FoodCategoryViewModel
-            {
-                Categories = categories
-            };
-            return View(viewModel);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error fetching categories");
-            TempData["Error"] = "Failed to load categories.";
-            return View(new FoodCategoryViewModel());
-        }
+            Categories = categories
+        };
+        return View(viewModel);
     }
 
     [HttpPost("Create")]
     public async Task<IActionResult> Create(FoodCategory category)
     {
-        try
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                TempData["Error"] = "Invalid category data.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            category.CreatedAt = DateTime.UtcNow;
-            category.UpdatedAt = DateTime.UtcNow;
-            await _foodCategoryRepository.AddCategoryAsync(category);
-
-            TempData["Success"] = "Category created successfully.";
+            TempData["Error"] = "Invalid category data.";
             return RedirectToAction(nameof(Index));
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error creating category");
-            TempData["Error"] = "Failed to create category.";
-            return RedirectToAction(nameof(Index));
-        }
+
+        category.CreatedAt = DateTime.UtcNow;
+        category.UpdatedAt = DateTime.UtcNow;
+        await _foodCategoryRepository.AddCategoryAsync(category);
+
+        TempData["Success"] = "Category created successfully.";
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: Admin/Category/Edit/5
     [HttpGet("Edit/{id}")]
     public async Task<IActionResult> Edit(int id)
     {
-        try
-        {
-            var category = await _foodCategoryRepository.GetCategoryByIDAsync(id);
+        var category = await _foodCategoryRepository.GetCategoryByIDAsync(id);
 
-            return View(category);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error fetching category for edit");
-            TempData["Error"] = "Failed to load category for editing.";
-            return RedirectToAction(nameof(Index));
-        }
+        return View(category);
     }
 
     [HttpPost("Update")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update(FoodCategory category)
     {
-        try
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                return View("Edit", category);
-            }
-
-            var existingCategory = await _foodCategoryRepository.GetCategoryByIDAsync(category.FoodCategoryId);
-            if (existingCategory == null)
-            {
-                return NotFound();
-            }
-
-            category.UpdatedAt = DateTime.UtcNow;
-            await _foodCategoryRepository.UpdateCategoryAsync(category);
-
-            TempData["Success"] = "Category updated successfully.";
-            return RedirectToAction(nameof(Index));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating category");
-            TempData["Error"] = "Failed to update category.";
             return View("Edit", category);
         }
+
+        var existingCategory = await _foodCategoryRepository.GetCategoryByIDAsync(category.FoodCategoryId);
+        if (existingCategory == null)
+        {
+            TempData["Error"] = "Category not found.";
+            return NotFound();
+        }
+
+        category.UpdatedAt = DateTime.UtcNow;
+        await _foodCategoryRepository.UpdateCategoryAsync(category);
+
+        TempData["Success"] = "Category updated successfully.";
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            await _foodCategoryRepository.DeleteCategoryAsync(id);
-            TempData["Success"] = "Category deleted successfully.";
-            return RedirectToAction(nameof(Index));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deleting category");
-            TempData["Error"] = "Failed to delete category.";
-            return RedirectToAction(nameof(Index));
-        }
+        await _foodCategoryRepository.DeleteCategoryAsync(id);
+        TempData["Success"] = "Category deleted successfully.";
+        return RedirectToAction(nameof(Index));
     }
 }
