@@ -120,6 +120,7 @@ public class VendorController : Controller
         };
 
         await _foodProductRepository.AddFoodProductAsync(product);
+        TempData["Success"] = "Product added successfully";
         return RedirectToAction(nameof(Index));
     }
 
