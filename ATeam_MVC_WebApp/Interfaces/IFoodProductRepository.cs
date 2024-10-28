@@ -13,6 +13,9 @@ public interface IFoodProductRepository
     // get the count of food products by vendor
     Task<int> GetFoodProductsByVendorCountAsync(string vendorId);
 
+    // Get count of all food products
+    Task<int> GetFoodProductsCountAsync();
+
     // get a food product by id
     Task<FoodProduct> GetFoodProductAsync(int id);
 

@@ -11,9 +11,8 @@
     {
       <div class="mb-4">
         <p class="mb-2">You are signed in as an administrator.</p>
-        <a href="@Url.Action("Index", "Admin")"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Go to Admin Dashboard
+        <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-primary">
+          Go to Dashboard
         </a>
       </div>
     }
@@ -21,8 +20,7 @@
     {
       <div class="mb-4">
         <p class="mb-2">Welcome back, vendor!</p>
-        <a href="@Url.Action("Index", "Vendor")"
-          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        <a asp-controller="Vendor" asp-action="Index" class="btn btn-primary">
           Manage Your Products
         </a>
       </div>
@@ -32,8 +30,7 @@
   {
     <div class="mb-4">
       <p class="mb-2">Please sign in to access the application.</p>
-      <a href="@Url.Action("Login", "Account", new { area = "Identity" })"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">
         Sign In
       </a>
     </div>
@@ -46,10 +43,17 @@
       oversee the entire catalog. Features include:
     </p>
     <ul class="list-disc pl-5">
-      <li class="mb-2">Product management for vendors</li>
-      <li class="mb-2">Administrative oversight and category management</li>
-      <li class="mb-2">Nutritional information tracking</li>
-      <li class="mb-2">Nøkkelhull qualification checks</li>
-    </ul>
+      <li class="mb-2">For Vendors:</li>
+      <ul class="list-disc pl-5">
+        <li class="mb-2">Add and Manage Products</li>
+        <li class="mb-2">See if you qualify for Nøkkelhullet</li>
+        <li class="mb-2">Nutritional information tracking</li>
+      </ul>
+      <li class="mb-2"> For Admins:</li>
+      <ul class="list-disc pl-5">
+        <li class="mb-2">Administrative oversight and category management</li>
+        <li class="mb-2">Nutritional information tracking</li>
+      </ul>
+      </>
   </div>
 </div>

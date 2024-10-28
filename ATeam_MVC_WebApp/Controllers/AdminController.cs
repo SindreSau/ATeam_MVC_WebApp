@@ -39,6 +39,7 @@ public class AdminController : Controller
 
         var foodProductViewModels = foodProducts.Select(fp => new FoodProductViewModel
         {
+            ProductId = fp.FoodProductId,
             ProductName = fp.ProductName,
             EnergyKcal = fp.EnergyKcal,
             Fat = fp.Fat,
@@ -58,7 +59,7 @@ public class AdminController : Controller
             {
                 CurrentPage = pageNumber,
                 PageSize = pageSize,
-                TotalCount = productsList.Count // Use count of current list
+                TotalCount = await _foodProductRepository.GetFoodProductsCountAsync()
             },
             OrderBy = orderBy,
             Nokkelhull = nokkelhull
