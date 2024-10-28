@@ -26,9 +26,9 @@
 </head>
 
 <body class="min-vh-100 d-flex flex-column">
-<header>
-    <nav class="navbar navbar-expand-sm border-bottom py-2">
-        <div class="container-fluid">
+<header class="">
+    <nav class=" navbar navbar-expand-sm border-bottom py-2">
+        <div class="container-md container-fluid">
             @* Brand logo *@
             <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
                 <img src="~/assets/nokkelhollet-logo.svg" alt="Nøkkelhollet" class="me-2" style="height: 40px; width: auto;"/>
@@ -41,19 +41,22 @@
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-
                     <li class="nav-item">
-                        <a class="nav-link mx-4" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link mx-4 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
                         @if (User.IsInRole("Admin"))
                         {
-                            <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Products</a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" ? "active" : "")"
+                           asp-area="" asp-controller="Admin" asp-action="Index">Products</a>
                         }
                         else
                         {
-                            <a class="nav-link" asp-area="" asp-controller="Vendor" asp-action="Index">Products</a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Vendor" ? "active" : "")"
+                           asp-area="" asp-controller="Vendor" asp-action="Index">Products</a>
                         }
                     </li>
-
                 </ul>
 
                 <!-- Theme Toggle Button -->
