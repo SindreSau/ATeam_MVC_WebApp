@@ -1,0 +1,140 @@
+@model FoodCategoryViewModel
+@{
+ViewData["Title"] = "Categories";
+Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <a asp-controller="Admin" asp-action="Index" class="link-info mb-4">← Back</a>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Food Categories</h1>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    }
+
+    <!-- Create Category Form -->
+    @if (Model.CategoryToEdit == null)
+    {
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h4 card-title">Add New Category</h2>
+        </div>
+        <div class="card-body">
+            <form asp-controller="Category" asp-action="Create" method="post">
+                <div class="mb-4">
+                    <label for="categoryName" class="form-label">Category Name</label>
+                    <input type="text" class="form-control" id="categoryName" name="CategoryName"
+                           required maxlength="100">
+                </div>
+                <button type="submit" class="btn btn-primary">Create Category</button>
+            </form>
+        </div>
+    </div>
+    }
+    else
+    {
+    <!-- Edit Category Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Edit Category</h5>
+        </div>
+        <div class="card-body">
+            <form asp-controller="Category" asp-action="Update" method="post">
+                <input type="hidden" name="FoodCategoryId" value="@Model.CategoryToEdit.FoodCategoryId">
+                <div class="mb-3">
+                    <label for="categoryName" class="form-label">Category Name</label>
+                    <input type="text" class="form-control" id="categoryName" name="CategoryName"
+                           value="@Model.CategoryToEdit.CategoryName" required maxlength="100">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Category</button>
+                <a asp-controller="Category" asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+    }
+
+    <!-- Categories Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category Name</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var category in Model.Categories)
+                    {
+                    <tr>
+                        <td>@category.FoodCategoryId</td>
+                        <td>@category.CategoryName</td>
+                        <td>@category.CreatedAt.ToLocalTime().</td>
+                        <td>@category.UpdatedAt.ToLocalTime()</td>
+                        <td>
+                            <a asp-controller="Category" asp-action="Edit" asp-route-id="@category.FoodCategoryId"
+                               class="btn btn-sm btn-primary">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <button class="btn btn-sm btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal_@category.FoodCategoryId">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteModal_@category.FoodCategoryId"
+                         data-bs-backdrop="static"
+                         data-bs-keyboard="false"
+                         tabindex="-1"
+                         aria-labelledby="deleteModalLabel_@category.FoodCategoryId"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel_@category.FoodCategoryId">
+                                        Delete @category.CategoryName
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete @category.CategoryName? This action cannot be undone.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-subtle" data-bs-dismiss="modal">Cancel</button>
+                                    <form asp-controller="Category" asp-action="Delete" asp-route-id="@category.FoodCategoryId" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
