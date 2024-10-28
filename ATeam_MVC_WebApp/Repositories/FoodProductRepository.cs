@@ -133,6 +133,12 @@ namespace ATeam_MVC_WebApp.Repositories
                 .CountAsync();
         }
 
+        public async Task<int> GetFoodProductsCountAsync()
+        {
+            return await _context.FoodProducts
+                .CountAsync();
+        }
+
         // Asynchronously retrieves a specific food product by its ID
         public async Task<FoodProduct> GetFoodProductAsync(int id)
         {

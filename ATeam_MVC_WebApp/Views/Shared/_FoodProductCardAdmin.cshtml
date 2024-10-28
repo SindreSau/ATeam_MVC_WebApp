@@ -1,44 +1,142 @@
 @model ATeam_MVC_WebApp.ViewModels.FoodProductViewModel
 
 <div class="card mb-1">
-  <div class="card-body rounded-5 d-flex flex-column">
-    <div class="d-flex justify-content-between align-items-center">
-      <h2 class="card-title h4 mb-0">@Model.ProductName</h2>
-      @if (Model.NokkelhullQualified)
-      {
-        <span class="badge bg-success fs-6 py-1 px-2">Nøkkelhull</span>
-      }
-      else
-      {
-        <span class="badge bg-danger fs-6 py-1 px-2">Nøkkelhull</span>
-      }
-    </div>
-    <p class="card-text text-muted small mb-2">
-      Category: @Model.CategoryName
-    </p>
-    <div class="mb-3">
-      <div class="col-auto">
-        <span class="badge bg-info">Energy: @Model.EnergyKcal.ToString("0") kcal</span>
+  <div class="card-body rounded-5">
+    <div class="d-grid gap-1">
+      <div class="d-flex justify-content-between align-items-start">
+        <h2 class="card-title h4 mb-0">@Model.ProductName</h2>
+        @if (Model.NokkelhullQualified)
+        {
+          <span class="badge bg-success fs-6 py-1 px-2">Nøkkelhull</span>
+        }
       </div>
-      <div class="col-auto">
-        <span class="badge bg-info">Protein: @Model.Protein g</span>
+      <div style="min-height: 48px;"> <!-- or whatever height works best -->
+        <p class="card-text text-muted small mb-2">
+          <span class="fw-medium">Category:</span> @Model.CategoryName
+        </p>
       </div>
-      <div class="col-auto">
-        <span class="badge bg-info">Fat: @Model.Fat g</span>
-      </div>
-      <div class="col-auto">
-        <span class="badge bg-info">Carbs: @Model.Carbohydrates g</span>
-      </div>
-      <div class="col-auto">
-        <span class="badge bg-info">Fiber: @Model.Fiber g</span>
-      </div>
-      <div class="col-auto">
-        <span class="badge bg-info">Salt: @Model.Salt g</span>
-      </div>
-      <div class="col-auto">
-        <span class="badge bg-discovery">Created By: @Model.CreatedByUsername</span>
-      </div>
-    </div>
+      <button type="button" class="btn btn-outline-secondary align-self-start" data-bs-toggle="modal"
+        data-bs-target="#productModal_@(Model.ProductId)">
+        View Details
+      </button>
 
+      <!-- Modal -->
+      <div class="modal fade" id="productModal_@(Model.ProductId)" tabindex="-1"
+        aria-labelledby="modalLabel_@(Model.ProductId)" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel_@(Model.ProductId)">
+                Details for @Model.ProductName
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!-- Nutritional Information Grid -->
+              <div class="row g-3">
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">Energy</h6>
+                      <p class="card-text fs-4 @(Model.NokkelhullQualified ? "text-success" : "text-warning") mb-0">
+                        @Model.EnergyKcal.ToString("0") kcal</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">Protein</h6>
+                      <p class="card-text fs-4 @(Model.NokkelhullQualified ? "text-success" : "text-warning") mb-0">
+                        @Model.Protein g</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">Fat</h6>
+                      <p class="card-text fs-4 @(Model.NokkelhullQualified ? "text-success" : "text-warning") mb-0">
+                        @Model.Fat g</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">Carbohydrates</h6>
+                      <p class="card-text fs-4 @(Model.NokkelhullQualified ? "text-success" : "text-warning") mb-0">
+                        @Model.Carbohydrates g</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">Fiber</h6>
+                      <p class="card-text fs-4 @(Model.NokkelhullQualified ? "text-success" : "text-warning") mb-0">
+                        @Model.Fiber g</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">Salt</h6>
+                      <p class="card-text fs-4 @(Model.NokkelhullQualified ? "text-success" : "text-warning") mb-0">
+                        @Model.Salt g</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Product Information with improved typography -->
+              <div class="mt-4 card">
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-3 text-muted">Product Information</h6>
+                  <div class="row mb-2">
+                    <div class="col">
+                      <span class="fs-6 text-muted">Category</span>
+                    </div>
+                    <div class="col text-end">
+                      <span class="fs-6 fw-medium">@Model.CategoryName</span>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col">
+                      <span class="fs-6 text-muted">Created By</span>
+                    </div>
+                    <div class="col text-end">
+                      <span class="fs-6 fw-medium">@Model.CreatedByUsername</span>
+                    </div>
+                  </div>
+                  @if (Model.NokkelhullQualified)
+                  {
+                    <div class="mt-3 text-center">
+                      <span class="badge bg-success py-2 px-3">
+                        <i class="bi bi-check-circle-fill me-2"></i>Nøkkelhull Qualified
+                      </span>
+                    </div>
+                  }
+                  else
+                  {
+                    <div class="mt-3 text-center">
+                      <span class="badge bg-danger py-2 px-3">
+                        <i class="bi bi-check-circle-fill me-2"></i>Not Qualified for Nøkkelhull
+                      </span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              @* <button type="button" class="btn btn-subtle" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-warning">Flag Product</button>
+              MAYBETODO: Add Possibility to Flag Product as Admin and Vendor sees it as Flagged *@
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
