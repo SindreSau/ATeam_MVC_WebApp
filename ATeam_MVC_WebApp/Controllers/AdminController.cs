@@ -3,9 +3,11 @@ using ATeam_MVC_WebApp.Repositories;
 using ATeam_MVC_WebApp.Models;
 using ATeam_MVC_WebApp.ViewModels;
 using ATeam_MVC_WebApp.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ATeam_MVC_WebApp.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly IFoodProductRepository _foodProductRepository;
