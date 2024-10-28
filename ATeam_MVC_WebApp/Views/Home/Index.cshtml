@@ -1,0 +1,55 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<div class="container mx-auto mt-10">
+  <h1 class="text-4xl font-bold mb-6">Welcome to Food App</h1>
+
+  @if (SignInManager.IsSignedIn(User))
+  {
+    @if (User.IsInRole("Admin"))
+    {
+      <div class="mb-4">
+        <p class="mb-2">You are signed in as an administrator.</p>
+        <a href="@Url.Action("Index", "Admin")"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Go to Admin Dashboard
+        </a>
+      </div>
+    }
+    else if (User.IsInRole("Vendor"))
+    {
+      <div class="mb-4">
+        <p class="mb-2">Welcome back, vendor!</p>
+        <a href="@Url.Action("Index", "Vendor")"
+          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+          Manage Your Products
+        </a>
+      </div>
+    }
+  }
+  else
+  {
+    <div class="mb-4">
+      <p class="mb-2">Please sign in to access the application.</p>
+      <a href="@Url.Action("Login", "Account", new { area = "Identity" })"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Sign In
+      </a>
+    </div>
+  }
+
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold mb-4">About Our Platform</h2>
+    <p class="mb-4">
+      Our food management platform helps vendors manage their products and administrators
+      oversee the entire catalog. Features include:
+    </p>
+    <ul class="list-disc pl-5">
+      <li class="mb-2">Product management for vendors</li>
+      <li class="mb-2">Administrative oversight and category management</li>
+      <li class="mb-2">Nutritional information tracking</li>
+      <li class="mb-2">Nøkkelhull qualification checks</li>
+    </ul>
+  </div>
+</div>
