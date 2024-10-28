@@ -96,6 +96,8 @@ namespace Tests.Controllers
         {
             // Arrange
             var userId = "test-user-id";
+            SetupUserContext(userId);
+
             var model = new CreateFoodProductViewModel
             {
                 ProductName = "New Product",
@@ -108,6 +110,9 @@ namespace Tests.Controllers
 
             _mockFoodProductRepo.Setup(repo => repo.AddFoodProductAsync(It.IsAny<FoodProduct>()))
                 .ReturnsAsync(new FoodProduct());
+
+            // Set model state to valid
+            _controller.ModelState.Clear();
 
             // Act
             var result = await _controller.Create(model);
@@ -182,6 +187,8 @@ namespace Tests.Controllers
             _mockFoodProductRepo.Setup(repo => repo.DeleteFoodProductAsync(1))
                 .ReturnsAsync(true);
 
+            _controller.ModelState.Clear();
+
             // Act
             var result = await _controller.Delete(1);
 
@@ -225,13 +232,27 @@ namespace Tests.Controllers
         /// <param name="userId">The user ID to set up</param>
         private void SetupUserContext(string userId)
         {
-            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userId) };
-            var identity = new ClaimsIdentity(claims);
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, userId),
+        new Claim(ClaimTypes.Role, "Vendor") // Add role claim if needed
+    };
+            var identity = new ClaimsIdentity(claims, "TestAuth");
             var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            var httpContext = new DefaultHttpContext
+            {
+                User = claimsPrincipal
+            };
+
             _controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext { User = claimsPrincipal }
+                HttpContext = httpContext
             };
+
+            // Setup UserManager mock for this context
+            _mockUserManager.Setup(um => um.GetUserId(It.IsAny<ClaimsPrincipal>()))
+                .Returns(userId);
         }
     }
 }
