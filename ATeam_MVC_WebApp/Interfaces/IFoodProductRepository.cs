@@ -5,7 +5,7 @@ namespace ATeam_MVC_WebApp.Interfaces;
 public interface IFoodProductRepository
 {
     // get all food products with pagination and sorting, and filtering by nokkelhull
-    Task<IEnumerable<FoodProduct>> GetFoodProductsAsync(int pageNumber, int pageSize, string orderBy, bool? nokkelhull);
+    Task<IEnumerable<FoodProduct>> GetFoodProductsAsync(int pageNumber, int pageSize, string orderBy, bool? nokkelhull, string searchTerm = "");
 
     // get all food products by vendor with pagination and sorting, and filtering by nokkelhull
     Task<IEnumerable<FoodProduct>> GetFoodProductsByVendorAsync(string vendorId, int pageNumber, int pageSize, string orderBy, bool? nokkelhull);
@@ -13,8 +13,8 @@ public interface IFoodProductRepository
     // get the count of food products by vendor
     Task<int> GetFoodProductsByVendorCountAsync(string vendorId);
 
-    // Get count of all food products
-    Task<int> GetFoodProductsCountAsync();
+    // get count of all food products
+    Task<int> GetFoodProductsCountAsync(string searchTerm, bool? nokkelhull);
 
     // get a food product by id
     Task<FoodProduct> GetFoodProductAsync(int id);
@@ -27,7 +27,5 @@ public interface IFoodProductRepository
 
     // delete a food product
     Task<bool> DeleteFoodProductAsync(int id);
-    // //oskar, gjorde dette får å få til view
-    //  Task<IEnumerable<FoodProduct>> GetAll();
 
 }

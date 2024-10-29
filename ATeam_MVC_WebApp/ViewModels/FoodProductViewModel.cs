@@ -13,6 +13,8 @@ namespace ATeam_MVC_WebApp.ViewModels
         public string OrderBy { get; set; } = string.Empty;
 
         public bool? Nokkelhull { get; set; }
+
+        public string SearchTerm { get; set; } = string.Empty;
     }
 
     public class FoodProductViewModel
