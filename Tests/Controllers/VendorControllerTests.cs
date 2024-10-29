@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure;
 using Moq;
 using System.Security.Claims;
 using ATeam_MVC_WebApp.Controllers;
@@ -102,7 +104,12 @@ namespace Tests.Controllers
             {
                 ProductName = "New Product",
                 EnergyKcal = 100,
-                FoodCategoryId = 1
+                FoodCategoryId = 1,
+                Fat = 10,           // Add these required properties
+                Carbohydrates = 10, // to match the validation
+                Protein = 10,       // requirements in your
+                Fiber = 5,          // CreateFoodProductViewModel
+                Salt = 1
             };
 
             _mockUserManager.Setup(um => um.GetUserId(It.IsAny<ClaimsPrincipal>()))
@@ -235,7 +242,7 @@ namespace Tests.Controllers
             var claims = new List<Claim>
     {
         new Claim(ClaimTypes.NameIdentifier, userId),
-        new Claim(ClaimTypes.Role, "Vendor") // Add role claim if needed
+        new Claim(ClaimTypes.Role, "Vendor")
     };
             var identity = new ClaimsIdentity(claims, "TestAuth");
             var claimsPrincipal = new ClaimsPrincipal(identity);
@@ -250,7 +257,12 @@ namespace Tests.Controllers
                 HttpContext = httpContext
             };
 
-            // Setup UserManager mock for this context
+            // Setup TempData
+            _controller.TempData = new TempDataDictionary(
+                httpContext,
+                Mock.Of<ITempDataProvider>()
+            );
+
             _mockUserManager.Setup(um => um.GetUserId(It.IsAny<ClaimsPrincipal>()))
                 .Returns(userId);
         }
