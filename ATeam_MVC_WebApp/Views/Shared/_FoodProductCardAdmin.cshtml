@@ -10,8 +10,8 @@
           <img src="~/nokkelhullet.png" alt="Nøkkelhull" class="ms-2" style="width: 24px; height: 24px;" />
         }
       </div>
-      <div style="min-height: 48px;"> <!-- or whatever height works best -->
-        <p class="card-text text-muted small mb-2">
+      <div style="min-height: 48px; min-width:48px;">
+        <p class="card-text text-muted small mb-2 text-truncate">
           <span class="fw-medium">Category:</span> @Model.CategoryName
         </p>
         <p class="card-text text-muted small mb-2">
@@ -93,7 +93,7 @@
                 </div>
               </div>
 
-              <!-- Product Information with improved typography -->
+              <!-- Product Information -->
               <div class="mt-4 card">
                 <div class="card-body">
                   <h6 class="card-subtitle mb-3 text-muted">Product Information</h6>

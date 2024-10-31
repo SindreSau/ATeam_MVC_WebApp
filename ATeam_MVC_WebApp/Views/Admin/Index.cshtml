@@ -68,7 +68,7 @@
 
                 <div class="input-group">
                     <input type="text" class="form-control" id="searchTerm" name="searchTerm" value="@Model.SearchTerm"
-                        placeholder="Search by name, category, or creator...">
+                        placeholder="Search by product name, category, or email">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search"></i>
                     </button>
@@ -84,6 +84,15 @@
             </form>
         </div>
     </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissable fade show d-flex justify-content-between align-items-center"
+            role="alert">
+            <span class="me-auto">@TempData["ErrorMessage"]</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
     <!-- Products Grid -->
     <div class="row g-4">
