@@ -3,28 +3,34 @@ using ATeam_MVC_WebApp.Repositories;
 using ATeam_MVC_WebApp.Models;
 using ATeam_MVC_WebApp.ViewModels;
 using ATeam_MVC_WebApp.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ATeam_MVC_WebApp.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly IFoodProductRepository _foodProductRepository;
-    private readonly IFoodCategoryRepository _foodCategoryRepository;
+    private readonly ILogger<AdminController> _logger;
 
-    public AdminController(IFoodProductRepository foodProductRepository, IFoodCategoryRepository foodCategoryRepository)
+    public AdminController(IFoodProductRepository foodProductRepository, ILogger<AdminController> logger)
     {
         _foodProductRepository = foodProductRepository;
-        _foodCategoryRepository = foodCategoryRepository;
+        _logger = logger;
     }
 
-    public async Task<IActionResult> ViewFoodProducts(
+    public async Task<IActionResult> Index(
         int pageNumber = 1,
         int pageSize = 10,
         string orderBy = "productname",
-        bool? nokkelhull = null
+        bool? nokkelhull = null,
+        string searchTerm = ""
     )
     {
-        var products = await _foodProductRepository.GetFoodProductsAsync(pageNumber, pageSize, orderBy, nokkelhull);
+        _logger.LogInformation("Admin Index accessed with parameters: PageNumber={PageNumber}, PageSize={PageSize}, OrderBy={OrderBy}, Nokkelhull={Nokkelhull}, SearchTerm={SearchTerm}",
+            pageNumber, pageSize, orderBy, nokkelhull, searchTerm);
+
+        var products = await _foodProductRepository.GetFoodProductsAsync(pageNumber, pageSize, orderBy, nokkelhull, searchTerm);
 
         // Store the products in a list to avoid multiple enumeration
         IEnumerable<FoodProduct> foodProducts = products.ToList(); // Added ToList() to avoid multiple enumeration
@@ -32,11 +38,29 @@ public class AdminController : Controller
 
         if (!productsList.Any())
         {
-            return NotFound("No food products found.");
+            var emptyViewModel = new FoodProductListViewModel
+            {
+                FoodProducts = new List<FoodProductViewModel>(),
+                Pagination = new PaginationViewModel
+                {
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    TotalCount = 0
+                },
+                OrderBy = orderBy,
+                Nokkelhull = nokkelhull,
+                SearchTerm = searchTerm
+            };
+
+            // Adding error message to TempData to show in View
+            TempData["ErrorMessage"] = "No items match your search. Please try again.";
+
+            return View(emptyViewModel);
         }
 
         var foodProductViewModels = foodProducts.Select(fp => new FoodProductViewModel
         {
+            ProductId = fp.FoodProductId,
             ProductName = fp.ProductName,
             EnergyKcal = fp.EnergyKcal,
             Fat = fp.Fat,
@@ -49,37 +73,20 @@ public class AdminController : Controller
             CategoryName = fp.FoodCategory?.CategoryName ?? "Unknown" // Added null check
         }).ToList();
 
-        return View(foodProductViewModels);
-    }
-
-
-    [HttpGet]
-    public IActionResult CreateCategory()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateCategory(FoodCategoryCreateViewModel model)
-    {
-        if (!ModelState.IsValid)
+        var viewModel = new FoodProductListViewModel
         {
-            return View(model);
-        }
-
-        if (model.CategoryName == null) return View(model); // Added null check
-
-        var category = new FoodCategory
-        {
-            CategoryName = model.CategoryName
+            FoodProducts = foodProductViewModels,
+            Pagination = new PaginationViewModel
+            {
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                TotalCount = await _foodProductRepository.GetFoodProductsCountAsync(searchTerm, nokkelhull)
+            },
+            OrderBy = orderBy,
+            Nokkelhull = nokkelhull,
+            SearchTerm = searchTerm
         };
 
-        bool returnOk = await _foodCategoryRepository.AddCategoryAsync(category);
-        if (returnOk)
-        {
-            return RedirectToAction();
-        }
-
-        return View(model);
+        return View(viewModel);
     }
 }

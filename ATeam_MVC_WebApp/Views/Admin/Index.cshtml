@@ -1,0 +1,139 @@
+@model ATeam_MVC_WebApp.ViewModels.FoodProductListViewModel
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "All Food Products";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>All Food Products</h1>
+        <a asp-controller="Category" asp-action="Index" class="btn btn-primary">
+            <i class="fa fa-pencil-ruler"></i> Manage Categories
+        </a>
+    </div>
+
+
+
+    <!-- Filtering and Sorting Controls -->
+    <div class="d-flex gap-3 align-items-center mb-4">
+        <!-- Sort dropdown -->
+        <form method="get" class="d-flex align-items-center">
+            <input type="hidden" name="pageNumber" value="1" />
+            <input type="hidden" name="searchTerm" value="@Model.SearchTerm" />
+            @if (Model.Nokkelhull.HasValue)
+            {
+                <input type="hidden" name="nokkelhull" value="@Model.Nokkelhull.Value.ToString().ToLower()" />
+            }
+            <select name="orderBy" class="form-select" onchange="this.form.submit()">
+                <option value="categoryname" selected="@(Model.OrderBy == "categoryname")">Sort by Category</option>
+                <option value="productname" selected="@(Model.OrderBy == "productname")">Sort by Name</option>
+            </select>
+        </form>
+
+        <!-- Nøkkelhull filter buttons -->
+        <div class="btn-group" role="group" aria-label="Nøkkelhull filter">
+            <a asp-action="Index" asp-route-orderBy="@Model.OrderBy" asp-route-pageSize="@Model.Pagination.PageSize"
+                asp-route-searchTerm="@Model.SearchTerm" asp-route-nokkelhull="@true" asp-route-pageNumber="1"
+                class="btn @(Model.Nokkelhull == true ? "btn-success" : "btn-outline-success")">
+                <i class="fa fa-key"></i> Nøkkelhull
+            </a>
+            <a asp-action="Index" asp-route-orderBy="@Model.OrderBy" asp-route-pageSize="@Model.Pagination.PageSize"
+                asp-route-searchTerm="@Model.SearchTerm" asp-route-nokkelhull="@false" asp-route-pageNumber="1"
+                class="btn @(Model.Nokkelhull == false ? "btn-danger" : "btn-outline-danger")">
+                <i class="fa fa-circle-xmark"></i> Not Nøkkelhull
+            </a>
+            @if (Model.Nokkelhull.HasValue)
+            {
+                <a asp-action="Index" asp-route-orderBy="@Model.OrderBy" asp-route-pageSize="@Model.Pagination.PageSize"
+                    asp-route-searchTerm="@Model.SearchTerm" asp-route-pageNumber="1" class="btn btn-outline-secondary">
+                    <i class="fa fa-x"></i> Clear Filter
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Search Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Search Products</h5>
+        </div>
+        <div class="card-body py-2">
+            <form method="get">
+                <input type="hidden" name="pageNumber" value="1" />
+                <input type="hidden" name="pageSize" value="@Model.Pagination.PageSize" />
+                <input type="hidden" name="orderBy" value="@Model.OrderBy" />
+                <input type="hidden" name="nokkelhull" value="@Model.Nokkelhull" />
+
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchTerm" name="searchTerm" value="@Model.SearchTerm"
+                        placeholder="Search by product name, category, or email">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                    {
+                        <a asp-action="Index" asp-route-orderBy="@Model.OrderBy"
+                            asp-route-pageSize="@Model.Pagination.PageSize" asp-route-nokkelhull="@Model.Nokkelhull"
+                            asp-route-pageNumber="1" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Clear
+                        </a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissable fade show d-flex justify-content-between align-items-center"
+            role="alert">
+            <span class="me-auto">@TempData["ErrorMessage"]</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Products Grid -->
+    <div class="row g-4">
+        @foreach (var foodProduct in Model.FoodProducts)
+        {
+            <div class="col-12 col-md-4 col-lg-4">
+                <partial name="_FoodProductCardAdmin" model="foodProduct" />
+            </div>
+        }
+    </div>
+
+    <!-- Pagination control row -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <!-- Items per page dropdown -->
+        <div class="d-flex align-items-center gap-2">
+            <label for="pageSize" class="form-label mb-0">Items per page:</label>
+            <form asp-action="Index" method="get" class="d-flex align-items-center">
+                <input type="hidden" name="pageNumber" value="1" />
+                <input type="hidden" name="orderBy" value="@Model.OrderBy" />
+                @if (Model.Nokkelhull.HasValue)
+                {
+                    <input type="hidden" name="nokkelhull" value="@Model.Nokkelhull.Value.ToString().ToLower()" />
+                }
+                <select id="pageSize" name="pageSize" class="form-select form-select-sm" style="width: auto;"
+                    onchange="this.form.submit()">
+                    @foreach (var size in new[] { 1, 2, 10, 25 })
+                    {
+                        <option value="@size" selected="@(Model.Pagination.PageSize == size)">@size</option>
+                    }
+                </select>
+            </form>
+        </div>
+
+        <!-- Pagination -->
+        <div>
+            <partial name="_PaginationPartial" model="@Model.Pagination" />
+        </div>
+
+        <!-- Total items display -->
+        <div class="text-muted">
+            Total items: @Model.Pagination.TotalCount
+        </div>
+    </div>
+</div>

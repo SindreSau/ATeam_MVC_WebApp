@@ -8,16 +8,17 @@
 }
 
 <div class="container py-4">
+    <partial name="_Alerts" />
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Food Products</h1>
 
         <div class="d-flex gap-3 align-items-center">
             @* Sort by dropdown - ProductId, CategoryName, ProductName submit on selection *@
             <form asp-action="Index" method="get" class="d-flex align-items-center gap-3">
-                <input type="hidden" name="pageNumber" value="1"/>
+                <input type="hidden" name="pageNumber" value="1" />
                 @if (Model.Nokkelhull.HasValue)
                 {
-                    <input type="hidden" name="nokkelhull" value="@Model.Nokkelhull.Value.ToString().ToLower()"/>
+                    <input type="hidden" name="nokkelhull" value="@Model.Nokkelhull.Value.ToString().ToLower()" />
                 }
                 <select name="orderBy" class="form-select" onchange="this.form.submit()">
                     <option value="productid" selected="@(Model.OrderBy == "productid")">Sort by ID</option>
@@ -28,36 +29,27 @@
 
             @* Filter buttons for Nøkkelhull *@
             <div class="btn-group" role="group" aria-label="Nøkkelhull filter">
-                <a asp-action="Index"
-                   asp-route-orderBy="@Model.OrderBy"
-                   asp-route-pageSize="@Model.Pagination.PageSize"
-                   asp-route-nokkelhull="@true"
-                   asp-route-pageNumber="1"
-                   class="btn @(Model.Nokkelhull == true ? "btn-primary" : "btn-outline-primary")">
-                    <i class="bi bi-check-circle"></i> Nøkkelhull
+                <a asp-action="Index" asp-route-orderBy="@Model.OrderBy" asp-route-pageSize="@Model.Pagination.PageSize"
+                    asp-route-nokkelhull="@true" asp-route-pageNumber="1"
+                    class="btn @(Model.Nokkelhull == true ? "btn-success" : "btn-outline-success")">
+                    <i class="fa fa-key"></i> Nøkkelhull
                 </a>
-                <a asp-action="Index"
-                   asp-route-orderBy="@Model.OrderBy"
-                   asp-route-pageSize="@Model.Pagination.PageSize"
-                   asp-route-nokkelhull="@false"
-                   asp-route-pageNumber="1"
-                   class="btn @(Model.Nokkelhull == false ? "btn-primary" : "btn-outline-primary")">
-                    <i class="bi bi-x-circle"></i> Not Nøkkelhull
+                <a asp-action="Index" asp-route-orderBy="@Model.OrderBy" asp-route-pageSize="@Model.Pagination.PageSize"
+                    asp-route-nokkelhull="@false" asp-route-pageNumber="1"
+                    class="btn @(Model.Nokkelhull == false ? "btn-danger" : "btn-outline-danger")">
+                    <i class="fa fa-circle-xmark"></i> Not Nøkkelhull
                 </a>
                 @if (Model.Nokkelhull.HasValue)
                 {
-                    <a asp-action="Index"
-                       asp-route-orderBy="@Model.OrderBy"
-                       asp-route-pageSize="@Model.Pagination.PageSize"
-                       asp-route-pageNumber="1"
-                       class="btn btn-outline-secondary">
-                        <i class="bi bi-x"></i> Clear Filter
+                    <a asp-action="Index" asp-route-orderBy="@Model.OrderBy" asp-route-pageSize="@Model.Pagination.PageSize"
+                        asp-route-pageNumber="1" class="btn btn-outline-secondary">
+                        <i class="fa fa-x"></i> Clear Filter
                     </a>
                 }
             </div>
 
             <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Add New Product
+                <i class="fa fa-plus-circle"></i> Add New Product
             </a>
         </div>
     </div>
@@ -66,7 +58,7 @@
         @foreach (var foodProduct in Model.FoodProducts)
         {
             <div class="col-12 col-md-6 col-lg-4">
-                <partial name="_FoodProductCardPartial" model="foodProduct"/>
+                <partial name="_FoodProductCardPartial" model="foodProduct" />
             </div>
         }
     </div>
@@ -77,17 +69,14 @@
         <div class="d-flex align-items-center gap-2">
             <label for="pageSize" class="form-label mb-0">Items per page:</label>
             <form asp-action="Index" method="get" class="d-flex align-items-center">
-                <input type="hidden" name="pageNumber" value="1"/>
-                <input type="hidden" name="orderBy" value="@Model.OrderBy"/>
+                <input type="hidden" name="pageNumber" value="1" />
+                <input type="hidden" name="orderBy" value="@Model.OrderBy" />
                 @if (Model.Nokkelhull.HasValue)
                 {
-                    <input type="hidden" name="nokkelhull" value="@Model.Nokkelhull.Value.ToString().ToLower()"/>
+                    <input type="hidden" name="nokkelhull" value="@Model.Nokkelhull.Value.ToString().ToLower()" />
                 }
-                <select id="pageSize"
-                        name="pageSize"
-                        class="form-select form-select-sm"
-                        style="width: auto;"
-                        onchange="this.form.submit()">
+                <select id="pageSize" name="pageSize" class="form-select form-select-sm" style="width: auto;"
+                    onchange="this.form.submit()">
                     @foreach (var size in new[] { 1, 2, 10, 25 })
                     {
                         <option value="@size" selected="@(Model.Pagination.PageSize == size)">@size</option>
@@ -98,7 +87,7 @@
 
         <!-- Pagination -->
         <div>
-            <partial name="_PaginationPartial" model="@Model.Pagination"/>
+            <partial name="_PaginationPartial" model="@Model.Pagination" />
         </div>
 
         <!-- Total items display -->

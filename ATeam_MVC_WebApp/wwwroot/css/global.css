@@ -28,3 +28,11 @@ button:focus, a.btn:focus, input[type="submit"]:focus, input[type="button"]:focu
 #theme-icon.ready {
     opacity: 1;
 }
+
+/* Active link styling */
+.nav-link.active {
+    font-weight: bold;
+    border-bottom: 2px solid #007bff55;
+    border-radius: 2px;
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transitions */
+}

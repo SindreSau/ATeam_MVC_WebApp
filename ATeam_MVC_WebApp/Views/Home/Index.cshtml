@@ -1,0 +1,63 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mx-auto mt-10">
+  <h1 class="text-4xl font-bold mb-6">Welcome to Food App</h1>
+
+  @if (SignInManager.IsSignedIn(User))
+  {
+    @if (User.IsInRole("Admin"))
+    {
+      <div class="mb-4">
+        <p class="mb-2">You are signed in as an administrator.</p>
+        <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-primary">
+          Go to Dashboard
+        </a>
+      </div>
+    }
+    else if (User.IsInRole("Vendor"))
+    {
+      <div class="mb-4">
+        <p class="mb-2">Welcome back, vendor!</p>
+        <a asp-controller="Vendor" asp-action="Index" class="btn btn-primary">
+          Manage Your Products
+        </a>
+      </div>
+    }
+  }
+  else
+  {
+    <div class="mb-4">
+      <p class="mb-2">Please sign in to access the application.</p>
+      <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">
+        Sign In
+      </a>
+    </div>
+  }
+
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold mb-4">About Our Platform</h2>
+    <p class="mb-4">
+      Our food management platform helps vendors manage their products and administrators
+      oversee the entire catalog. Features include:
+    </p>
+    <ul class="list-disc pl-5">
+      <li class="mb-2">For Vendors:</li>
+      <ul class="list-disc pl-5">
+        <li class="mb-2">Add and Manage Products</li>
+        <li class="mb-2">See if you qualify for Nøkkelhullet</li>
+        <li class="mb-2">Nutritional information tracking</li>
+      </ul>
+      <li class="mb-2"> For Admins:</li>
+      <ul class="list-disc pl-5">
+        <li class="mb-2">Administrative oversight and category management</li>
+        <li class="mb-2">Nutritional information tracking</li>
+      </ul>
+    </ul>
+  </div>
+</div>

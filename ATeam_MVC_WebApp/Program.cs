@@ -102,11 +102,10 @@ app.UseRequestLogging();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Vendor}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 
 Log.Information("Web application started successfully");
 Log.Information("Web application listening on http://localhost:5000 and https://localhost:5001");
-await app.RunAsync();
 await app.RunAsync();

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure;
 using Moq;
 using System.Security.Claims;
 using ATeam_MVC_WebApp.Controllers;
@@ -96,11 +98,18 @@ namespace Tests.Controllers
         {
             // Arrange
             var userId = "test-user-id";
+            SetupUserContext(userId);
+
             var model = new CreateFoodProductViewModel
             {
                 ProductName = "New Product",
                 EnergyKcal = 100,
-                FoodCategoryId = 1
+                FoodCategoryId = 1,
+                Fat = 10,           // Add these required properties
+                Carbohydrates = 10, // to match the validation
+                Protein = 10,       // requirements in your
+                Fiber = 5,          // CreateFoodProductViewModel
+                Salt = 1
             };
 
             _mockUserManager.Setup(um => um.GetUserId(It.IsAny<ClaimsPrincipal>()))
@@ -108,6 +117,9 @@ namespace Tests.Controllers
 
             _mockFoodProductRepo.Setup(repo => repo.AddFoodProductAsync(It.IsAny<FoodProduct>()))
                 .ReturnsAsync(new FoodProduct());
+
+            // Set model state to valid
+            _controller.ModelState.Clear();
 
             // Act
             var result = await _controller.Create(model);
@@ -182,6 +194,8 @@ namespace Tests.Controllers
             _mockFoodProductRepo.Setup(repo => repo.DeleteFoodProductAsync(1))
                 .ReturnsAsync(true);
 
+            _controller.ModelState.Clear();
+
             // Act
             var result = await _controller.Delete(1);
 
@@ -225,13 +239,32 @@ namespace Tests.Controllers
         /// <param name="userId">The user ID to set up</param>
         private void SetupUserContext(string userId)
         {
-            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userId) };
-            var identity = new ClaimsIdentity(claims);
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, userId),
+        new Claim(ClaimTypes.Role, "Vendor")
+    };
+            var identity = new ClaimsIdentity(claims, "TestAuth");
             var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            var httpContext = new DefaultHttpContext
+            {
+                User = claimsPrincipal
+            };
+
             _controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext { User = claimsPrincipal }
+                HttpContext = httpContext
             };
+
+            // Setup TempData
+            _controller.TempData = new TempDataDictionary(
+                httpContext,
+                Mock.Of<ITempDataProvider>()
+            );
+
+            _mockUserManager.Setup(um => um.GetUserId(It.IsAny<ClaimsPrincipal>()))
+                .Returns(userId);
         }
     }
 }

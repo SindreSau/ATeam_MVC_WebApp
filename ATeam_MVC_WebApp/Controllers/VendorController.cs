@@ -104,6 +104,12 @@ public class VendorController : Controller
             return Unauthorized();
         }
 
+        // Check if the model is null
+        if (model == null)
+        {
+            return BadRequest("Model cannot be null");
+        }
+
         // Create a new food product
         var product = new FoodProduct
         {
@@ -120,6 +126,7 @@ public class VendorController : Controller
         };
 
         await _foodProductRepository.AddFoodProductAsync(product);
+        TempData["Success"] = "Product added successfully";
         return RedirectToAction(nameof(Index));
     }
 
@@ -200,9 +207,8 @@ public class VendorController : Controller
         existingProduct.UpdatedAt = DateTime.UtcNow;
 
         await _foodProductRepository.UpdateFoodProductAsync(existingProduct);
-        return
-            RedirectToAction(
-                nameof(Index)); // Returns to MyProducts method, which sends Vendor back to seeing their products
+        TempData["Success"] = "Product updated successfully";
+        return RedirectToAction(nameof(Index));
     }
 
     // ======== DELETE ========
@@ -224,7 +230,14 @@ public class VendorController : Controller
             return Unauthorized();
         }
 
+        // Check if userId is null or empty
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
         await _foodProductRepository.DeleteFoodProductAsync(id);
+        TempData["Success"] = "Product deleted successfully";
         return RedirectToAction(nameof(Index));
     }
 }

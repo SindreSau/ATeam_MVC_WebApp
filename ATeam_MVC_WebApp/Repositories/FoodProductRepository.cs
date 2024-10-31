@@ -10,22 +10,45 @@ namespace ATeam_MVC_WebApp.Repositories
     public class FoodProductRepository : IFoodProductRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<FoodProductRepository> _logger;
 
         // Constructor that initializes the repository with the application database context
-        public FoodProductRepository(ApplicationDbContext context)
+        public FoodProductRepository(ApplicationDbContext context, ILogger<FoodProductRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // Asynchronously retrieves a paginated list of food products based on filter and sort criteria
-        public async Task<IEnumerable<FoodProduct>> GetFoodProductsAsync(int pageNumber, int pageSize, string orderBy, bool? nokkelhull)
+        public async Task<IEnumerable<FoodProduct>> GetFoodProductsAsync(int pageNumber, int pageSize, string orderBy, bool? nokkelhull, string searchTerm = "")
         {
+            _logger.LogInformation("Getting food products with parameters: PageNumber={PageNumber}, PageSize={PageSize}, OrderBy={OrderBy}, Nokkelhull={Nokkelhull}, SearchTerm={SearchTerm}",
+                pageNumber, pageSize, orderBy, nokkelhull, searchTerm);
+
             // Create a queryable collection of food products
-            var query = _context.FoodProducts.AsQueryable();
+            var query = _context.FoodProducts
+                .Include(fp => fp.FoodCategory)
+                .Include(fp => fp.CreatedBy)
+                .AsQueryable();
+
+            // Apply search if term provided
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                _logger.LogInformation("Applying search filter for term: {SearchTerm}", searchTerm);
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(p =>
+                    (p.ProductName != null && EF.Functions.Like(p.ProductName.ToLower(), $"%{searchTerm}%")) ||
+                    (p.FoodCategory != null && p.FoodCategory.CategoryName != null &&
+                    EF.Functions.Like(p.FoodCategory.CategoryName.ToLower(), $"%{searchTerm}%")) ||
+                    (p.CreatedBy != null && p.CreatedBy.UserName != null &&
+                    EF.Functions.Like(p.CreatedBy.UserName.ToLower(), $"%{searchTerm}%"))
+                );
+            }
 
             // Filter products based on whether they are Nokkelhull qualified
             if (nokkelhull != null)
             {
+                _logger.LogInformation("Applying Nokkelhull filter: {Nokkelhull}", nokkelhull);
                 query = query.Where(fp => fp.NokkelhullQualified == nokkelhull);
             }
 
@@ -33,38 +56,43 @@ namespace ATeam_MVC_WebApp.Repositories
             switch (orderBy.ToLower())
             {
                 case "productname":
-                    query = query.OrderBy(fp => fp.ProductName);
+                    query = query.OrderBy(fp => fp.ProductName ?? "");  // Null coalescing
                     break;
-                case "energykcal":
-                    query = query.OrderBy(fp => fp.EnergyKcal);
+                case "productname_desc":
+                    query = query.OrderByDescending(fp => fp.ProductName ?? "");
                     break;
-                case "fat":
-                    query = query.OrderBy(fp => fp.Fat);
+                case "category":
+                    query = query.OrderBy(fp => fp.FoodCategory != null ? fp.FoodCategory.CategoryName ?? "" : "")
+                                .ThenBy(fp => fp.ProductName ?? "");
                     break;
-                case "carbohydrates":
-                    query = query.OrderBy(fp => fp.Carbohydrates);
+                case "category_desc":
+                    query = query.OrderByDescending(fp => fp.FoodCategory != null ? fp.FoodCategory.CategoryName ?? "" : "")
+                                .ThenBy(fp => fp.ProductName ?? "");
                     break;
-                case "protein":
-                    query = query.OrderBy(fp => fp.Protein);
-                    break;
-                case "fiber":
-                    query = query.OrderBy(fp => fp.Fiber);
-                    break;
-                case "salt":
-                    query = query.OrderBy(fp => fp.Salt);
-                    break;
+                // ... rest of your cases ...
                 default:
-                    query = query.OrderBy(fp => fp.FoodProductId); // Default ordering by Id
+                    query = query.OrderBy(fp => fp.FoodProductId);
                     break;
             }
 
+            // Log the SQL query before pagination
+            var sqlBeforePaging = query.ToQueryString();
+            _logger.LogInformation("Generated SQL before pagination: {Sql}", sqlBeforePaging);
+
             // Apply pagination
             query = query
-                .Skip((pageNumber - 1) * pageSize) // Skip the previous pages
-                .Take(pageSize); // Take the specified number of records for the current page
-            
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize);
+
+            // Log final SQL
+            var finalSql = query.ToQueryString();
+            _logger.LogInformation("Final SQL with pagination: {Sql}", finalSql);
+
             // Execute the query and return the list of food products
-            return await query.ToListAsync();
+            var results = await query.ToListAsync();
+            _logger.LogInformation("Query returned {Count} results", results.Count);
+
+            return results;
         }
 
         // Get paginated food products by vendor ID with filter and sort criteria
@@ -130,8 +158,32 @@ namespace ATeam_MVC_WebApp.Repositories
                 .CountAsync();
         }
 
+        public async Task<int> GetFoodProductsCountAsync(string searchTerm = "", bool? nokkelhull = null)
+        {
+            var query = _context.FoodProducts.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(p =>
+                    (p.ProductName != null && EF.Functions.Like(p.ProductName.ToLower(), $"%{searchTerm}%")) ||
+                    (p.FoodCategory != null && p.FoodCategory.CategoryName != null &&
+                    EF.Functions.Like(p.FoodCategory.CategoryName.ToLower(), $"%{searchTerm}%")) ||
+                    (p.CreatedBy != null && p.CreatedBy.UserName != null &&
+                    EF.Functions.Like(p.CreatedBy.UserName.ToLower(), $"%{searchTerm}%"))
+                );
+            }
+
+            if (nokkelhull.HasValue)
+            {
+                query = query.Where(p => p.NokkelhullQualified == nokkelhull.Value);
+            }
+
+            return await query.CountAsync();
+        }
+
         // Asynchronously retrieves a specific food product by its ID
-        public async Task<FoodProduct> GetFoodProductAsync(int id) 
+        public async Task<FoodProduct> GetFoodProductAsync(int id)
         {
             // Find and return the food product by ID
             var foodProduct = await _context.FoodProducts.FindAsync(id);
@@ -194,10 +246,6 @@ namespace ATeam_MVC_WebApp.Repositories
             await _context.SaveChangesAsync();
             return true; // Return true indicating successful deletion
         }
-        //oskar, gjorde dette får å få til view
-        public async Task<IEnumerable<FoodProduct>> GetAll()
-        {
-            return await _context.FoodProducts.ToListAsync();
-        }
+
     }
 }

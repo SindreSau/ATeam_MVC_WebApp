@@ -6,7 +6,7 @@
             <h2 class="card-title h3 mb-0">@Model.ProductName</h2>
             @if (Model.NokkelhullQualified)
             {
-                <span class="badge bg-success">Nøkkelhull</span>
+                <img src="~/nokkelhullet.png" alt="Nøkkelhull" class="ms-2" style="width: 24px; height: 24px;" />
             }
         </div>
         <p class="card-text text-muted small mb-2">
@@ -34,24 +34,19 @@
         </div>
         <div class="d-flex gap-2">
             <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-sm btn-outline-secondary">
-                <i class="bi bi-pencil"></i> Edit
+                <i class="fa fa-pencil"></i> Edit
             </a>
-            <button class="btn btn-sm btn-outline-danger"
-                    data-bs-toggle="modal"
-                    data-bs-target="#deleteModal_@Model.ProductId">
-                <i class="bi bi-trash"></i> Delete
+            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                data-bs-target="#deleteModal_@Model.ProductId">
+                <i class="fa fa-trash"></i> Delete
             </button>
         </div>
     </div>
 </div>
 
 <!-- Delete Modal with unique ID -->
-<div class="modal fade" id="deleteModal_@Model.ProductId"
-     data-bs-backdrop="static"
-     data-bs-keyboard="false"
-     tabindex="-1"
-     aria-labelledby="deleteModalLabel_@Model.ProductId"
-     aria-hidden="true">
+<div class="modal fade" id="deleteModal_@Model.ProductId" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="deleteModalLabel_@Model.ProductId" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

@@ -53,6 +53,8 @@ namespace ATeam_MVC_WebApp.Repositories
       }
       // Updates name of category in context
       existingCategory.CategoryName = category.CategoryName;
+      existingCategory.UpdatedAt = category.UpdatedAt;
+
       _context.FoodCategories.Update(existingCategory);
       // Saves changes to database
       await _context.SaveChangesAsync();
@@ -73,10 +75,5 @@ namespace ATeam_MVC_WebApp.Repositories
       await _context.SaveChangesAsync();
       return true;
     }
-    public async Task<IEnumerable<FoodCategory>> GetAll()
-        {
-            return await _context.FoodCategories.ToListAsync();
-        }
-
   }
 }
