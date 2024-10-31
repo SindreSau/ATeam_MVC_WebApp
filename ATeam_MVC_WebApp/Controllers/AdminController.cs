@@ -38,7 +38,24 @@ public class AdminController : Controller
 
         if (!productsList.Any())
         {
-            return NotFound("No food products found.");
+            var emptyViewModel = new FoodProductListViewModel
+            {
+                FoodProducts = new List<FoodProductViewModel>(),
+                Pagination = new PaginationViewModel
+                {
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    TotalCount = 0
+                },
+                OrderBy = orderBy,
+                Nokkelhull = nokkelhull,
+                SearchTerm = searchTerm
+            };
+
+            // Adding error message to TempData to show in View
+            TempData["ErrorMessage"] = "No items match your search. Please try again.";
+
+            return View(emptyViewModel);
         }
 
         var foodProductViewModels = foodProducts.Select(fp => new FoodProductViewModel
