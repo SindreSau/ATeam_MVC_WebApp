@@ -7,7 +7,7 @@ public static class IdentityConfig
 {
     public static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
-        services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        services.AddDefaultIdentity<IdentityUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.SignIn.RequireConfirmedEmail = false;
@@ -17,6 +17,7 @@ public static class IdentityConfig
                 options.Password.RequireLowercase = true;
                 options.Password.RequireNonAlphanumeric = false;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
@@ -30,7 +31,6 @@ public static class IdentityConfig
             options.SlidingExpiration = false;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             options.Cookie.MaxAge = TimeSpan.FromDays(30);
-
             options.Events.OnRedirectToLogin = context =>
             {
                 context.Response.Redirect("/Identity/Account/Login");
