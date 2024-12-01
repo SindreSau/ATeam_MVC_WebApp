@@ -4,9 +4,7 @@ using ATeam_MVC_WebApp.Interfaces;
 using ATeam_MVC_WebApp.Models;
 using ATeam_MVC_WebApp.ViewModels;
 using System.Security.Claims;
-using ATeam_MVC_WebApp.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ATeam_MVC_WebApp.Controllers;
@@ -45,6 +43,7 @@ public class VendorController : Controller
         var products =
             await _foodProductRepository.GetFoodProductsByVendorAsync(userId, pageNumber, pageSize, orderBy,
                 nokkelhull);
+
         var viewModel = new FoodProductListViewModel
         {
             FoodProducts = products.Select(fp => new FoodProductViewModel

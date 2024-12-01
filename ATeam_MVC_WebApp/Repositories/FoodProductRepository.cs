@@ -58,20 +58,12 @@ namespace ATeam_MVC_WebApp.Repositories
                 case "productname":
                     query = query.OrderBy(fp => fp.ProductName ?? "");  // Null coalescing
                     break;
-                case "productname_desc":
-                    query = query.OrderByDescending(fp => fp.ProductName ?? "");
+                case "categoryname":
+                    query = query.OrderBy(fp => fp.FoodCategory!.CategoryName)
+                        .ThenBy(fp => fp.ProductName);
                     break;
-                case "category":
-                    query = query.OrderBy(fp => fp.FoodCategory != null ? fp.FoodCategory.CategoryName ?? "" : "")
-                                .ThenBy(fp => fp.ProductName ?? "");
-                    break;
-                case "category_desc":
-                    query = query.OrderByDescending(fp => fp.FoodCategory != null ? fp.FoodCategory.CategoryName ?? "" : "")
-                                .ThenBy(fp => fp.ProductName ?? "");
-                    break;
-                // ... rest of your cases ...
                 default:
-                    query = query.OrderBy(fp => fp.FoodProductId);
+                    query = query.OrderBy(fp => fp.CreatedAt); // Default ordering by CreatedAt
                     break;
             }
 

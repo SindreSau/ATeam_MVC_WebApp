@@ -1,5 +1,6 @@
 using ATeam_MVC_WebApp.Interfaces;
 using ATeam_MVC_WebApp.Models;
+using ATeam_MVC_WebApp.Repositories;
 using ATeam_MVC_WebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -82,8 +83,20 @@ public class CategoryController : Controller
     [HttpPost("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _foodCategoryRepository.DeleteCategoryAsync(id);
-        TempData["Success"] = "Category deleted successfully.";
+        try
+        {
+            await _foodCategoryRepository.DeleteCategoryAsync(id);
+            TempData["Success"] = "Category deleted successfully.";
+        }
+        catch (FoodCategoryRepository.CategoryInUseException ex)
+        {
+            TempData["Error"] = ex.Message;
+        }
+        catch (KeyNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
+        }
+
         return RedirectToAction(nameof(Index));
     }
 }
